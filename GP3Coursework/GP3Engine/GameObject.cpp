@@ -1,5 +1,5 @@
 #include "GameObject.h"
-#include "Components\InputComponent.h"
+#include "InputComponent.h"
 
 Scene* GameObject::curScene = NULL;
 
@@ -67,7 +67,7 @@ GameObject::~GameObject()
 {
 }
 
-void GameObject::update(mat4 VPMat)
+void GameObject::update(mat4 &VPMat)
 {
 	modelMatrix = translate(mat4(1.0f), localPos);
 	modelMatrix = rotate(modelMatrix, radians(rotation.x), vec3(1, 0, 0));

@@ -8,8 +8,8 @@ enum Components
 	INPUT_COMPONENT,
 };
 
-#include "Components\BaseComponent.h"
-#include "Components\RenderComponent.h"
-#include "Components\InputComponent.h"
+#include "BaseComponent.h"
+#include "RenderComponent.h"
+#include "InputComponent.h"
 
 #endif

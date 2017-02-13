@@ -59,7 +59,7 @@ struct Box
 		return center;
 	}
 
-	void DrawBox(mat4 modelMatrix)
+	void DrawBox(mat4 &modelMatrix)
 	{
 		glLineWidth(5);
 		glColor4f(1, 0, 0, 0);

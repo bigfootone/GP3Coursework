@@ -1,4 +1,4 @@
-#include "Components\RenderComponent.h"
+#include "RenderComponent.h"
 #include "GameObject.h"
 
 Renderer::Renderer()
@@ -21,7 +21,7 @@ void Renderer::init()
 
 }
 
-void Renderer::update(mat4 MVPMat)
+void Renderer::update(mat4 &MVPMat)
 {
 	MVP = MVPMat;
 }

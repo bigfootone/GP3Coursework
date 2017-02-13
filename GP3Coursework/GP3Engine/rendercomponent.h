@@ -13,7 +13,7 @@ public:
 	~Renderer();
 
 	void init() override;
-	void update(mat4 MVPMat) override;
+	void update(mat4 &MVPMat) override;
 	void render() override;
 	string getType() override;
 private:

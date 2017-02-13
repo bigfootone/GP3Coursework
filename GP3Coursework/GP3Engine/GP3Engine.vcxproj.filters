@@ -13,12 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\Components">
-      <UniqueIdentifier>{a44e7795-8ee2-46c8-83be-85648d819d1b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Components">
-      <UniqueIdentifier>{20adcc7a-93dd-42db-bdb9-781fc394290a}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Box.h">
@@ -105,17 +99,17 @@
     <ClInclude Include="Window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Components\BaseComponent.h">
-      <Filter>Header Files\Components</Filter>
+    <ClInclude Include="BaseComponent.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Components\Components.h">
-      <Filter>Header Files\Components</Filter>
+    <ClInclude Include="Components.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Components\InputComponent.h">
-      <Filter>Header Files\Components</Filter>
+    <ClInclude Include="InputComponent.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Components\RenderComponent.h">
-      <Filter>Header Files\Components</Filter>
+    <ClInclude Include="rendercomponent.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -179,11 +173,11 @@
     <ClCompile Include="Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Components\InputComponent.cpp">
-      <Filter>Source Files\Components</Filter>
+    <ClCompile Include="InputComponent.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Components\RenderComponent.cpp">
-      <Filter>Source Files\Components</Filter>
+    <ClCompile Include="RenderComponent.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

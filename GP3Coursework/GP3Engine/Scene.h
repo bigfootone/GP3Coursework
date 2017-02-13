@@ -9,7 +9,7 @@
 #include "FBXLoader.h"
 #include "Object.h"
 #include "GameObject.h"
-#include "Components\Components.h"
+#include "Components.h"
 #include "SDL2.h"
 #include "KeyboardListener.h"
 #include "PlayerController.h"

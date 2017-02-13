@@ -4,7 +4,7 @@
 #pragma once
 
 #include "Common.h"
-#include "Components\Components.h"
+#include "Components.h"
 #include "Shader.h"
 #include "Object.h"
 #include <map>
@@ -30,7 +30,7 @@ public:
 	~GameObject();
 
 	//in .cpp
-	void update(mat4 VPMat);
+	void update(mat4 &VPMat);
 	void render(Fustrum *fustrum);
 	void addComponent(Components type);
 	void addChild(GameObject *tempChild);
