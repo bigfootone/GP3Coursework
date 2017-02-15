@@ -180,12 +180,4 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
-  <ItemGroup>
-    <Library Include="glew32.lib" />
-    <Library Include="libfbxsdk.lib" />
-    <Library Include="SDL2.lib" />
-    <Library Include="SDL2_image.lib" />
-    <Library Include="SDL2_ttf.lib" />
-    <Library Include="SDL2main.lib" />
-  </ItemGroup>
 </Project>

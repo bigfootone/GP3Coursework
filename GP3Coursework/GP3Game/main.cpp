@@ -9,7 +9,7 @@ int main(int argc, char * arg[])
 
 	bool run = true;
 
-	createWindow("GP 2 Coursework: The Holo Room");
+	createWindow("GP3Game");
 
 	GameApp *curGame = new GP2CourseWorkGame();
 

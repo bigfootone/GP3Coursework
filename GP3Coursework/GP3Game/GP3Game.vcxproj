@@ -82,7 +82,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>D:\Windows\Documents\C++ Libs\SDL2-2.0.3\include;D:\Windows\Documents\C++ Libs\SDL2_ttf-2.0.12\include;D:\Windows\Documents\C++ Libs\SDL2_image-2.0.0\include;D:\Windows\Documents\C++ Libs\glm-0.9.7;D:\Windows\Documents\C++ Libs\glew-1.12.0\include;D:\Windows\Documents\C++ Libs\FBXSDK\include;D:\Windows\Documents\Visual Studio 2015\Projects\GP3Coursework\GP3Coursework\GP3Coursework\GP3Engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>D:\Windows\Documents\C++ Libs\SDL2-2.0.3\lib\x64;D:\Windows\Documents\C++ Libs\SDL2_ttf-2.0.12\lib\x64;D:\Windows\Documents\C++ Libs\SDL2_image-2.0.0\lib\x64;D:\Windows\Documents\C++ Libs\glew-1.12.0\lib\Release\x64;D:\Windows\Documents\C++ Libs\FBXSDK\lib\vs2015\x64\release;D:\Windows\Documents\Visual Studio 2015\Projects\GP3Coursework\GP3Coursework\GP3Coursework\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>GP3Engine.lib;libfbxsdk.lib;glew32.lib;opengl32.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
