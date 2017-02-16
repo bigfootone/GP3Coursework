@@ -1,0 +1,88 @@
+<root>
+    <worldObject>
+        <object>
+            <name>world Object</name>
+            <world>1</world>
+            <active>1</active>
+            <model/>
+            <texture/>
+            <shader/>
+            <localPos x="0" y="0" z="0"/>
+            <scale x="0" y="0" z="0"/>
+            <rotation x="0" y="0" z="0"/>
+            <components/>
+            <children>
+                <child>
+                    <object>
+                        <name>player</name>
+                        <world>1</world>
+                        <active>1</active>
+                        <model/>
+                        <texture/>
+                        <shader/>
+                        <localPos x="5" y="0" z="45"/>
+                        <scale x="1" y="1" z="1"/>
+                        <rotation x="0" y="0" z="0"/>
+                        <components>
+                            <component>2</component>
+                        </components>
+                        <children/>
+                    </object>
+                </child>
+                <child>
+                    <object>
+                        <name>sun</name>
+                        <world>1</world>
+                        <active>1</active>
+                        <model>teapot</model>
+                        <texture>diffuseMap</texture>
+                        <shader>textureSpecular</shader>
+                        <localPos x="20" y="0" z="-25"/>
+                        <scale x="1" y="1" z="1"/>
+                        <rotation x="0" y="0" z="0"/>
+                        <components>
+                            <component>1</component>
+                        </components>
+                        <children>
+                            <child>
+                                <object>
+                                    <name>earth</name>
+                                    <world>1</world>
+                                    <active>1</active>
+                                    <model>teapot</model>
+                                    <texture>earth</texture>
+                                    <shader>textureSpecular</shader>
+                                    <localPos x="0" y="-10" z="10"/>
+                                    <scale x="1" y="1" z="1"/>
+                                    <rotation x="0" y="0" z="0"/>
+                                    <components>
+                                        <component>1</component>
+                                    </components>
+                                    <children>
+                                        <child>
+                                            <object>
+                                                <name>moon</name>
+                                                <world>1</world>
+                                                <active>1</active>
+                                                <model>teapot</model>
+                                                <texture>gray</texture>
+                                                <shader>textureSpecular</shader>
+                                                <localPos x="0" y="-30" z="10"/>
+                                                <scale x="1" y="1" z="1"/>
+                                                <rotation x="0" y="0" z="0"/>
+                                                <components>
+                                                    <component>1</component>
+                                                </components>
+                                                <children/>
+                                            </object>
+                                        </child>
+                                    </children>
+                                </object>
+                            </child>
+                        </children>
+                    </object>
+                </child>
+            </children>
+        </object>
+    </worldObject>
+</root>

@@ -1,2 +1,0 @@
-#include "LightSource.h"
-
