@@ -263,13 +263,13 @@ void HoloRoomScene::createScene()
 	tempObj->setPosition(vec3(0, 0, 0));
 	tempObj->setActive(true);
 
-	tempObj->addChild(new GameObject("sun", tempObj, objects["teapot"], textures["sun"], shaders["shadowMap"]));	//creating object
+	tempObj->addChild(new GameObject("sun", tempObj, objects["teapot"], textures["sun"], shaders["main"]));	//creating object
 	tempObj->getChild("sun")->addComponent(RENDER_COMPONENT);	//adding render comp
 	tempObj->getChild("sun")->setPosition(vec3(0, 25, 0));	//changing postiion
 	tempObj->getChild("sun")->setRotation(vec3(0, 0, 0));	//change rotaion
 	tempObj->getChild("sun")->setScale(vec3(0.5, 0.5, 0.5));	//change scele
 
-	tempObj->addChild(new GameObject("teapotRoom", tempObj, objects["teapotRoom"], textures["teapotRoom"], shaders["shadowMap"]));	//creating object
+	tempObj->addChild(new GameObject("teapotRoom", tempObj, objects["teapotRoom"], textures["teapotRoom"], shaders["main"]));	//creating object
 	tempObj->getChild("teapotRoom")->addComponent(RENDER_COMPONENT);	//adding render comp
 	tempObj->getChild("teapotRoom")->setPosition(vec3(0, -25, 0));	//changing postiion
 	tempObj->getChild("teapotRoom")->setRotation(vec3(-90, 0, 0));	//change rotaion
@@ -281,7 +281,7 @@ void HoloRoomScene::createScene()
 	tempObj = worldObject->getChild("apolloRoomNode"); //setting temp object for easy access
 	tempObj->setActive(false);
 
-	tempObj->addChild(new GameObject("LanderRoom", tempObj, objects["LanderRoom"], textures["LanderRoom"], shaders["shadowMap"]));	//creating object
+	tempObj->addChild(new GameObject("LanderRoom", tempObj, objects["LanderRoom"], textures["LanderRoom"], shaders["main"]));	//creating object
 	tempObj->getChild("LanderRoom")->addComponent(RENDER_COMPONENT);	//adding render comp
 	tempObj->getChild("LanderRoom")->setPosition(vec3(0, -25, 0));	//changing postiion
 	tempObj->getChild("LanderRoom")->setRotation(vec3(0, 0, 0));	//change rotaion
@@ -292,14 +292,14 @@ void HoloRoomScene::createScene()
 	tempObj = worldObject->getChild("walkerNode"); //setting temp object for easy access
 	tempObj->setActive(false);
 
-	tempObj->addChild(new GameObject("walkerRoom", tempObj, objects["walkerRoom"], textures["walkerRoom"], shaders["shadowMap"]));	//creating object
+	tempObj->addChild(new GameObject("walkerRoom", tempObj, objects["walkerRoom"], textures["walkerRoom"], shaders["main"]));	//creating object
 	tempObj->getChild("walkerRoom")->addComponent(RENDER_COMPONENT);	//adding render comp
 	tempObj->getChild("walkerRoom")->setPosition(vec3(0, -25, 0));	//changing postiion
 	tempObj->getChild("walkerRoom")->setRotation(vec3(0, 0, 0));	//change rotaion
 	tempObj->getChild("walkerRoom")->setScale(vec3(3, 3, 3));	//change scele
 
 	//set skybox
-	worldObject->addChild(new GameObject("skybox", worldObject, objects["cubeMesh"], skyMaterial, shaders["shadowMap"]));
+	worldObject->addChild(new GameObject("skybox", worldObject, objects["cubeMesh"], skyMaterial, shaders["main"]));
 	worldObject->getChild("skybox")->addComponent(RENDER_COMPONENT);
 	worldObject->getChild("skybox")->setForceRender(true);
 	worldObject->getChild("skybox")->setScale(vec3(20, 20, 20));	//change scele
@@ -680,15 +680,14 @@ void HoloRoomScene::RenderPostQuad()
 	//clear the colour and depth buffer
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glUseProgram(shaders["postProcess"]->getShader());
+	GLuint s = shaders["quadShader"]->getShader();
+	glUseProgram(s);
 
-	GLint textureLocation = glGetUniformLocation(shaders["postProcess"]->getShader(), "texture0");
-	GLint timeLocation = glGetUniformLocation(shaders["postProcess"]->getShader(), "time");
-	GLint resolutionLocation = glGetUniformLocation(shaders["postProcess"]->getShader(), "resolution");
-	GLuint factorLocation = glGetUniformLocation(shaders["postProcess"]->getShader(), "factor");
-	GLuint sepiaTriggerLoc = glGetUniformLocation(shaders["postProcess"]->getShader(), "trigger");
-
-
+	GLint textureLocation = glGetUniformLocation(s, "texture0");
+	GLint timeLocation = glGetUniformLocation(s, "time");
+	GLint resolutionLocation = glGetUniformLocation(s, "resolution");
+	GLuint factorLocation = glGetUniformLocation(s, "factor");
+	GLuint sepiaTriggerLoc = glGetUniformLocation(s, "trigger");
 
 	glUniform1f(factorLocation, factor);
 	glUniform1f(timeLocation, totalTime);

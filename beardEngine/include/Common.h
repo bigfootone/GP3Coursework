@@ -36,4 +36,12 @@ const string FONT_PATH = "/fonts";
 const string MODEL_PATH = "/models";
 const string SCENE_PATH = "/scenes";
 
+void checkError(const char *file, int line);
+
+#ifdef _DEBUG
+#define CHECK_GL_ERROR() checkError(__FILE__, __LINE__)
+#else
+#define CHECK_GL_ERROR()
+#endif
+
 #endif

@@ -15,6 +15,7 @@ Object::~Object()
 
 void Object::createBuffer(string modelPath)
 {
+	CHECK_GL_ERROR();
 
 	//load model
 	currentMesh = new MeshData();
@@ -56,12 +57,7 @@ void Object::createBuffer(string modelPath)
 	boundingBox = new Box();
 	boundingBox->setPoints(currentMesh);
 
-	GLenum err = GL_NO_ERROR;
-	while ((err = glGetError()) != GL_NO_ERROR)
-	{
-		//Process/log the error.
-		cout << "error in creating object buffer " << err << endl;
-	}
+	CHECK_GL_ERROR();
 
 }
 
