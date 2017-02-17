@@ -1,7 +1,7 @@
 #include "Window.h"
 #undef main
 #include "GP2CourseWorkGame.h"
-
+#include "btBulletCollisionCommon.h"
 
 
 int main(int argc, char * arg[])
@@ -24,6 +24,6 @@ int main(int argc, char * arg[])
 	curGame->destroyGame();
 	destroyWindow();
 
-    return 0;
+	return 0;
 }
 vector <IkeyboardListener*> keyboardListeners;
