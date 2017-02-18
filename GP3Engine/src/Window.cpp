@@ -63,7 +63,7 @@ void destroyWindow()
 }
 
 void windowLoop()
-		{
+{
 	//call swap so that our GL back buffer is displayed
 	SDL_GL_SwapWindow(window);
 }

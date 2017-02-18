@@ -1,25 +1,25 @@
-#include "HoloRoomScene.h"
+#include "SpaceScene.h"
 #include "Editor.h"
 #include "OpenGL.h"
 
-HoloRoomScene::HoloRoomScene()
+SpaceScene::SpaceScene()
 {
 	debugMode = false;
 	worldObject = new GameObject("world Object");
 }
 
-HoloRoomScene::HoloRoomScene(string tempName)
+SpaceScene::SpaceScene(string tempName)
 {
 	debugMode = false;
 	name = tempName;
 	worldObject = new GameObject("world Object");
 }
 
-HoloRoomScene::~HoloRoomScene()
+SpaceScene::~SpaceScene()
 {
 }
 
-void HoloRoomScene::render()
+void SpaceScene::render()
 {
 
 	//set the clear colour background 
@@ -41,7 +41,7 @@ void HoloRoomScene::render()
 
 
 	glUseProgram(shaders["shadowMap"]->getShader());
-	update();
+	//update();
 
 
 	glUniformMatrix4fv(MVPLocation, 1, GL_FALSE, &input->getMVPmatrix()[0][0]);
@@ -86,6 +86,7 @@ void HoloRoomScene::render()
 
 
 	worldObject->render(fustrum);
+	//worldObject->getChild("centerOfSpaceNode")->getChild("sun")->render(fustrum);
 
 	/*
 	GLenum err = GL_NO_ERROR;
@@ -99,26 +100,25 @@ void HoloRoomScene::render()
 
 
 
-void HoloRoomScene::update()
+void SpaceScene::update()
 {
 	GLenum err = GL_NO_ERROR;
 	input->Update();
+
+	bulPhys->updatePhysics();
 
 	//i ++;
 	//worldObject->getChild("sun")->setRotation(vec3(0, i, 0));
 	//worldObject->getChild("sun")->getChild("earth")->setRotation(vec3(0, i, 0));
 	//worldObject->getChild("sun")->getChild("earth")->getChild("moon")->changePosition(vec3(0.0f, 0.0f, -0.01f));
 
+
+	btVector3 tempVec3 = bulPhys->getPosition(bulPhys->getRidgidBody(1));
+	vec3 pos = vec3(tempVec3.getX(), tempVec3.getY(), tempVec3.getZ());
+	worldObject->getChild("centerOfSpaceNode")->getChild("sun")->setPosition(pos);
 	worldObject->update(input->getMVPmatrix());
 
-	/*
-	GLenum err = GL_NO_ERROR;
-	while ((err = glGetError()) != GL_NO_ERROR)
-	{
-		//Process/log the error.
-		cout << "error in updating scene " << err << endl;
-	}
-	*/
+	CHECK_GL_ERROR();
 
 	mat4 biasMatrix(
 		0.5, 0.0, 0.0, 0.0,
@@ -132,7 +132,7 @@ void HoloRoomScene::update()
 }
 
 
-void HoloRoomScene::createScene()
+void SpaceScene::createScene()
 {
 	//CreateFrameBuffer(); ENable for post processing
 	glEnable(GL_DEPTH_TEST);
@@ -143,9 +143,14 @@ void HoloRoomScene::createScene()
 	editor = new Editor(this);
 	debugMode = false;
 
+	//set up physics
+	bulPhys = new BulletPhys();
+	bulPhys->CreateGroundPlane();
+	bulPhys->CreatePhysSphere();
+
 	input = new PlayerController();
-	Object *tea = new Object();
-	tea->createBuffer("/utah-teapot.fbx");
+	/*Object *tea = new Object();
+	tea->createBuffer("/utah-teapot.fbx");*/
 
 
 	//create cubemap texture
@@ -162,12 +167,12 @@ void HoloRoomScene::createScene()
 	objects.insert(pair<string, Object*>("teapot", new Object("teapot")));
 	objects["teapot"]->createBuffer("/utah-teapot.FBX");
 
-	objects.insert(pair<string, Object*>("teapotRoom", new Object("teapotRoom")));
+	/*objects.insert(pair<string, Object*>("teapotRoom", new Object("teapotRoom")));
 	objects["teapotRoom"]->createBuffer("/TheTeapotRoom.FBX");
 	objects.insert(pair<string, Object*>("walkerRoom", new Object("walkerRoom")));
 	objects["walkerRoom"]->createBuffer("/TheWalkerRoom.FBX");
 	objects.insert(pair<string, Object*>("LanderRoom", new Object("LanderRoom")));
-	objects["LanderRoom"]->createBuffer("/TheLanderRoom.FBX");
+	objects["LanderRoom"]->createBuffer("/TheLanderRoom.FBX");*/
 
 	objects.insert(pair<string, Object*>("cubeMesh", new Cube("cubeMesh")));
 	objects["cubeMesh"]->createBuffer();
@@ -176,7 +181,7 @@ void HoloRoomScene::createScene()
 	textures.insert(pair<string, Texture*>("sun", new Texture("sun")));
 	textures["sun"]->createTexture("/SunTexture.png");
 
-	textures.insert(pair<string, Texture*>("lander", new Texture("lander")));
+	/*textures.insert(pair<string, Texture*>("lander", new Texture("lander")));
 	textures["lander"]->createTexture("/apollo map.jpg");
 
 	textures.insert(pair<string, Texture*>("teapotRoom", new Texture("teapotRoom")));
@@ -190,7 +195,7 @@ void HoloRoomScene::createScene()
 	textures.insert(pair<string, Texture*>("moon", new Texture("moon")));
 	textures["moon"]->createTexture("/MoonTexture.png");
 	textures.insert(pair<string, Texture*>("gray", new Texture("gray")));
-	textures["gray"]->createTexture("/gray.png");
+	textures["gray"]->createTexture("/gray.png");*/
 
 	//create shaders
 	Shader * s = new Shader("main");
@@ -258,51 +263,52 @@ void HoloRoomScene::createScene()
 	worldObject->getChild("player")->addComponent(INPUT_COMPONENT);
 
 	//teapot room node done
-	worldObject->addChild(new GameObject("teapotRoomNode", worldObject));	//creating node
-	tempObj = worldObject->getChild("teapotRoomNode"); //setting temp object for easy access
+	worldObject->addChild(new GameObject("centerOfSpaceNode", worldObject));	//creating node
+	tempObj = worldObject->getChild("centerOfSpaceNode"); //setting temp object for easy access
 	tempObj->setPosition(vec3(0, 0, 0));
 	tempObj->setActive(true);
 
 	tempObj->addChild(new GameObject("sun", tempObj, objects["teapot"], textures["sun"], shaders["main"]));	//creating object
 	tempObj->getChild("sun")->addComponent(RENDER_COMPONENT);	//adding render comp
-	tempObj->getChild("sun")->setPosition(vec3(0, 25, 0));	//changing postiion
+	tempObj->getChild("sun")->setPosition(vec3(2, 100, 0));	//changing postiion
 	tempObj->getChild("sun")->setRotation(vec3(0, 0, 0));	//change rotaion
-	tempObj->getChild("sun")->setScale(vec3(0.5, 0.5, 0.5));	//change scele
+	tempObj->getChild("sun")->setScale(vec3(2, 2, 2));	//change scele
+	tempObj->getChild("sun")->setForceRender(true);
 
-	tempObj->addChild(new GameObject("teapotRoom", tempObj, objects["teapotRoom"], textures["teapotRoom"], shaders["main"]));	//creating object
-	tempObj->getChild("teapotRoom")->addComponent(RENDER_COMPONENT);	//adding render comp
-	tempObj->getChild("teapotRoom")->setPosition(vec3(0, -25, 0));	//changing postiion
-	tempObj->getChild("teapotRoom")->setRotation(vec3(-90, 0, 0));	//change rotaion
-	tempObj->getChild("teapotRoom")->setScale(vec3(1, 1, 1));	//change scele
+	//tempObj->addChild(new GameObject("teapotRoom", tempObj, objects["teapotRoom"], textures["teapotRoom"], shaders["main"]));	//creating object
+	//tempObj->getChild("teapotRoom")->addComponent(RENDER_COMPONENT);	//adding render comp
+	//tempObj->getChild("teapotRoom")->setPosition(vec3(0, -25, 0));	//changing postiion
+	//tempObj->getChild("teapotRoom")->setRotation(vec3(-90, 0, 0));	//change rotaion
+	//tempObj->getChild("teapotRoom")->setScale(vec3(1, 1, 1));	//change scele
 
 
-	//lander room node
-	worldObject->addChild(new GameObject("apolloRoomNode", worldObject));	//creating node
-	tempObj = worldObject->getChild("apolloRoomNode"); //setting temp object for easy access
-	tempObj->setActive(false);
+	////lander room node
+	//worldObject->addChild(new GameObject("apolloRoomNode", worldObject));	//creating node
+	//tempObj = worldObject->getChild("apolloRoomNode"); //setting temp object for easy access
+	//tempObj->setActive(false);
 
-	tempObj->addChild(new GameObject("LanderRoom", tempObj, objects["LanderRoom"], textures["LanderRoom"], shaders["main"]));	//creating object
-	tempObj->getChild("LanderRoom")->addComponent(RENDER_COMPONENT);	//adding render comp
-	tempObj->getChild("LanderRoom")->setPosition(vec3(0, -25, 0));	//changing postiion
-	tempObj->getChild("LanderRoom")->setRotation(vec3(0, 0, 0));	//change rotaion
-	tempObj->getChild("LanderRoom")->setScale(vec3(1, 1, 1));	//change scele
+	//tempObj->addChild(new GameObject("LanderRoom", tempObj, objects["LanderRoom"], textures["LanderRoom"], shaders["main"]));	//creating object
+	//tempObj->getChild("LanderRoom")->addComponent(RENDER_COMPONENT);	//adding render comp
+	//tempObj->getChild("LanderRoom")->setPosition(vec3(0, -25, 0));	//changing postiion
+	//tempObj->getChild("LanderRoom")->setRotation(vec3(0, 0, 0));	//change rotaion
+	//tempObj->getChild("LanderRoom")->setScale(vec3(1, 1, 1));	//change scele
 
-	//walker room node
-	worldObject->addChild(new GameObject("walkerNode", worldObject));	//creating node
-	tempObj = worldObject->getChild("walkerNode"); //setting temp object for easy access
-	tempObj->setActive(false);
+	////walker room node
+	//worldObject->addChild(new GameObject("walkerNode", worldObject));	//creating node
+	//tempObj = worldObject->getChild("walkerNode"); //setting temp object for easy access
+	//tempObj->setActive(false);
 
-	tempObj->addChild(new GameObject("walkerRoom", tempObj, objects["walkerRoom"], textures["walkerRoom"], shaders["main"]));	//creating object
-	tempObj->getChild("walkerRoom")->addComponent(RENDER_COMPONENT);	//adding render comp
-	tempObj->getChild("walkerRoom")->setPosition(vec3(0, -25, 0));	//changing postiion
-	tempObj->getChild("walkerRoom")->setRotation(vec3(0, 0, 0));	//change rotaion
-	tempObj->getChild("walkerRoom")->setScale(vec3(3, 3, 3));	//change scele
+	//tempObj->addChild(new GameObject("walkerRoom", tempObj, objects["walkerRoom"], textures["walkerRoom"], shaders["main"]));	//creating object
+	//tempObj->getChild("walkerRoom")->addComponent(RENDER_COMPONENT);	//adding render comp
+	//tempObj->getChild("walkerRoom")->setPosition(vec3(0, -25, 0));	//changing postiion
+	//tempObj->getChild("walkerRoom")->setRotation(vec3(0, 0, 0));	//change rotaion
+	//tempObj->getChild("walkerRoom")->setScale(vec3(3, 3, 3));	//change scele
 
 	//set skybox
 	worldObject->addChild(new GameObject("skybox", worldObject, objects["cubeMesh"], skyMaterial, shaders["main"]));
 	worldObject->getChild("skybox")->addComponent(RENDER_COMPONENT);
 	worldObject->getChild("skybox")->setForceRender(true);
-	worldObject->getChild("skybox")->setScale(vec3(20, 20, 20));	//change scele
+	worldObject->getChild("skybox")->setScale(vec3(200, 200, 200));	//change scele
 
 	cout << "world: " << worldObject->getName() << " components: ";
 	worldObject->printComponents();
@@ -348,7 +354,7 @@ void HoloRoomScene::createScene()
 	
 }
 
-void HoloRoomScene::ShadowFramebuffer()
+void SpaceScene::ShadowFramebuffer()
 {
 	// The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
 	glGenFramebuffers(1, &shadowFBO);
@@ -372,7 +378,7 @@ void HoloRoomScene::ShadowFramebuffer()
 
 }
 
-void HoloRoomScene::BuildQuad()
+void SpaceScene::BuildQuad()
 {
 	const GLfloat g_quad_vertex_buffer_data[] = {
 		-1.0f, -1.0f, 0.0f,
@@ -390,7 +396,7 @@ void HoloRoomScene::BuildQuad()
 	quadTexture = glGetUniformLocation(shaders["quadShader"]->getShader(), "texture");
 }
 
-void HoloRoomScene::ShadowMapPass()
+void SpaceScene::ShadowMapPass()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, shadowFBO);
 	glViewport(0, 0, 1024, 1024);
@@ -407,7 +413,7 @@ void HoloRoomScene::ShadowMapPass()
 	worldObject->render(fustrum);
 }
 
-void HoloRoomScene::UpdateLightPerspMVP()
+void SpaceScene::UpdateLightPerspMVP()
 {
 	// Compute the MVP matrix from the light's point of view
 	mat4 depthProjectionMatrix = glm::ortho<float>(-10, 10, -10, 10, -10, 20);
@@ -417,7 +423,7 @@ void HoloRoomScene::UpdateLightPerspMVP()
 
 }
 
-void HoloRoomScene::RenderQuad()
+void SpaceScene::RenderQuad()
 {
 	glViewport(0, 0, 512, 512);
 
@@ -446,25 +452,28 @@ void HoloRoomScene::RenderQuad()
 
 }
 
-void HoloRoomScene::destroyScene()
+void SpaceScene::destroyScene()
 {
 	shaders["main"]->cleanUp();
 	shaders["sky"]->cleanUp();
 	shaders["shadowMap"]->cleanUp();	
 	objects["teapot"]->cleanUp();
 	objects["cubeMesh"]->cleanUp();
+
+	delete bulPhys;
 }
 
-void HoloRoomScene::SceneLoop()
+void SpaceScene::SceneLoop()
 {
 	windowLoop();
+	update();
 	//ShadowMapPass();
 	render();
 	//RenderQuad();
 	RenderPostQuad();
 }
 
-GameObject *HoloRoomScene::getGameObject(string command)
+GameObject *SpaceScene::getGameObject(string command)
 {
 	GameObject * tempGameObject;
 	tempGameObject = worldObject->findChild(command);
@@ -479,12 +488,12 @@ GameObject *HoloRoomScene::getGameObject(string command)
 	return tempGameObject;
 }
 
-GameObject *HoloRoomScene::getWorldObject()
+GameObject *SpaceScene::getWorldObject()
 {
 	return worldObject;
 }
 
-Object *HoloRoomScene::getObject(string command)
+Object *SpaceScene::getObject(string command)
 {
 	Object * tempObject;
 	tempObject = objects[command];
@@ -499,7 +508,7 @@ Object *HoloRoomScene::getObject(string command)
 	return tempObject;
 }
 
-Texture *HoloRoomScene::getTexture(string command)
+Texture *SpaceScene::getTexture(string command)
 {
 	Texture * tempTexture;
 	tempTexture = textures[command];
@@ -514,7 +523,7 @@ Texture *HoloRoomScene::getTexture(string command)
 	return tempTexture;
 }
 
-Shader *HoloRoomScene::getShader(string command)
+Shader *SpaceScene::getShader(string command)
 {
 	Shader * tempShader;
 	tempShader = shaders[command];
@@ -529,7 +538,7 @@ Shader *HoloRoomScene::getShader(string command)
 	return tempShader;
 }
 
-void HoloRoomScene::onKeyDown(SDL_Keycode key)
+void SpaceScene::onKeyDown(SDL_Keycode key)
 {
 	//cout << "Key down " << key << endl;
 	fustrum->updateCamera();
@@ -553,6 +562,9 @@ void HoloRoomScene::onKeyDown(SDL_Keycode key)
 		{
 			editor->readCommand();
 		}
+		break;
+	case SDLK_ESCAPE:
+		GameRunning = false;
 		break;
 	case SDLK_m:
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -595,22 +607,22 @@ void HoloRoomScene::onKeyDown(SDL_Keycode key)
 	}
 }
 
-void HoloRoomScene::onkeyUp(SDL_Keycode key)
+void SpaceScene::onkeyUp(SDL_Keycode key)
 {
 	//cout << "Key up " << key << endl;
 }
 
-void HoloRoomScene::mouseMove(SDL_MouseMotionEvent motion)
+void SpaceScene::mouseMove(SDL_MouseMotionEvent motion)
 {
 
 }
 
-string HoloRoomScene::getName()
+string SpaceScene::getName()
 {
 	return name;
 }
 
-void HoloRoomScene::CreateFrameBuffer()
+void SpaceScene::CreateFrameBuffer()
 {
 	glActiveTexture(GL_TEXTURE0);
 	glGenTextures(1, &FBOTexture);
@@ -663,7 +675,7 @@ void HoloRoomScene::CreateFrameBuffer()
 		);
 }
 
-void HoloRoomScene::CleanUpFrameBuffer()
+void SpaceScene::CleanUpFrameBuffer()
 {
 	glDeleteBuffers(1, &fullScreenVBO);
 	glDeleteVertexArrays(1, &fullScreenVAO);
@@ -672,7 +684,7 @@ void HoloRoomScene::CleanUpFrameBuffer()
 	glDeleteTextures(1, &FBOTexture);
 }
 
-void HoloRoomScene::RenderPostQuad()
+void SpaceScene::RenderPostQuad()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	//Set the clear colour(background)

@@ -1,23 +1,22 @@
 #include "Window.h"
 #undef main
-#include "GP2CourseWorkGame.h"
-#include "btBulletCollisionCommon.h"
+#include "GP3Game.h"
 
 
 int main(int argc, char * arg[])
 {
 
-	bool run = true;
+	GameRunning = true;
 
-	createWindow("GP 2 Coursework: The Holo Room");
+	createWindow("Space Decent");
 
-	GameApp *curGame = new GP2CourseWorkGame();
+	GameApp *curGame = new GP3Game();
 
-	while (run)
+	while (GameRunning)
 	{
 		if (!curGame->gameLoop())
 		{
-			run = false;
+			GameRunning = false;
 		}
 	}
 
@@ -27,3 +26,4 @@ int main(int argc, char * arg[])
 	return 0;
 }
 vector <IkeyboardListener*> keyboardListeners;
+bool GameRunning = true;

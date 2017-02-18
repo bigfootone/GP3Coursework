@@ -1,7 +1,8 @@
-#ifndef _HOLOROOMSCENE_H
-#define _HOLOROOMSCENE_H
+#ifndef _SpaceScene_H
+#define _SpaceScene_H
 
 #include "Scene.h"
+#include "BulletPhys.h"
 
 
 struct Light {
@@ -11,12 +12,12 @@ struct Light {
 	float ambientCoefficient;
 };
 
-class HoloRoomScene : public IkeyboardListener, public Scene 
+class SpaceScene : public IkeyboardListener, public Scene 
 {
 public:
-	HoloRoomScene();
-	HoloRoomScene(string name);
-	~HoloRoomScene();
+	SpaceScene();
+	SpaceScene(string name);
+	~SpaceScene();
 
 	void update() override;
 	void render() override;
@@ -120,6 +121,8 @@ private:
 	GLboolean sepia = false;
 	//woo we're the best
 
+	//bullet physics 
+	BulletPhys *bulPhys;
 };
 
 #endif
