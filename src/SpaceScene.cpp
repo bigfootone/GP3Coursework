@@ -1,3 +1,4 @@
+
 #include "SpaceScene.h"
 #include "Editor.h"
 #include "OpenGL.h"
@@ -41,7 +42,7 @@ void SpaceScene::render()
 
 
 	glUseProgram(shaders["shadowMap"]->getShader());
-	//update();
+	update();
 
 
 	glUniformMatrix4fv(MVPLocation, 1, GL_FALSE, &input->getMVPmatrix()[0][0]);
@@ -70,7 +71,7 @@ void SpaceScene::render()
 	//glUniform1i(shadowMapLocation, 1);
 
 	glDepthMask(GL_TRUE);
-	
+
 
 	GLint lightDirectionLocation = glGetUniformLocation(shaders["toonMaterial"]->getShader(), "lightDirection");
 	glUniform3f(lightDirectionLocation, 0.0f, 0.0f, 1.0f);
@@ -79,21 +80,20 @@ void SpaceScene::render()
 	glUniform4f(diffMatColourLocation, 0.7f, 0.7f, 0.7f, 1.0f);
 
 	GLint specMatColourLocation = glGetUniformLocation(shaders["toonMaterial"]->getShader(), "specularMaterialColour");
-	glUniform4f(specMatColourLocation, 1.0f,1.0f,1.0f,1.0f);
+	glUniform4f(specMatColourLocation, 1.0f, 1.0f, 1.0f, 1.0f);
 
 	GLint specPowerLocation = glGetUniformLocation(shaders["toonMaterial"]->getShader(), "specularPower");
 	glUniform1f(specPowerLocation, 5.0f);
 
 
 	worldObject->render(fustrum);
-	//worldObject->getChild("centerOfSpaceNode")->getChild("sun")->render(fustrum);
 
 	/*
 	GLenum err = GL_NO_ERROR;
 	while ((err = glGetError()) != GL_NO_ERROR)
 	{
-		//Process/log the error.
-		cout << "error in rendering scene " << err << endl;
+	//Process/log the error.
+	cout << "error in rendering scene " << err << endl;
 	}
 	*/
 }
@@ -105,27 +105,28 @@ void SpaceScene::update()
 	GLenum err = GL_NO_ERROR;
 	input->Update();
 
-	bulPhys->updatePhysics();
-
 	//i ++;
 	//worldObject->getChild("sun")->setRotation(vec3(0, i, 0));
 	//worldObject->getChild("sun")->getChild("earth")->setRotation(vec3(0, i, 0));
 	//worldObject->getChild("sun")->getChild("earth")->getChild("moon")->changePosition(vec3(0.0f, 0.0f, -0.01f));
 
-
-	btVector3 tempVec3 = bulPhys->getPosition(bulPhys->getRidgidBody(1));
-	vec3 pos = vec3(tempVec3.getX(), tempVec3.getY(), tempVec3.getZ());
-	worldObject->getChild("centerOfSpaceNode")->getChild("sun")->setPosition(pos);
 	worldObject->update(input->getMVPmatrix());
 
-	CHECK_GL_ERROR();
+	/*
+	GLenum err = GL_NO_ERROR;
+	while ((err = glGetError()) != GL_NO_ERROR)
+	{
+	//Process/log the error.
+	cout << "error in updating scene " << err << endl;
+	}
+	*/
 
 	mat4 biasMatrix(
 		0.5, 0.0, 0.0, 0.0,
 		0.0, 0.5, 0.0, 0.0,
 		0.0, 0.0, 0.5, 0.0,
 		0.5, 0.5, 0.5, 1.0
-		);
+	);
 
 	depthBias = biasMatrix * depthMVP;
 
@@ -143,14 +144,9 @@ void SpaceScene::createScene()
 	editor = new Editor(this);
 	debugMode = false;
 
-	//set up physics
-	bulPhys = new BulletPhys();
-	bulPhys->CreateGroundPlane();
-	bulPhys->CreatePhysSphere();
-
 	input = new PlayerController();
-	/*Object *tea = new Object();
-	tea->createBuffer("/utah-teapot.fbx");*/
+	Object *tea = new Object();
+	tea->createBuffer("/utah-teapot.fbx");
 
 
 	//create cubemap texture
@@ -263,17 +259,16 @@ void SpaceScene::createScene()
 	worldObject->getChild("player")->addComponent(INPUT_COMPONENT);
 
 	//teapot room node done
-	worldObject->addChild(new GameObject("centerOfSpaceNode", worldObject));	//creating node
-	tempObj = worldObject->getChild("centerOfSpaceNode"); //setting temp object for easy access
+	worldObject->addChild(new GameObject("teapotRoomNode", worldObject));	//creating node
+	tempObj = worldObject->getChild("teapotRoomNode"); //setting temp object for easy access
 	tempObj->setPosition(vec3(0, 0, 0));
 	tempObj->setActive(true);
 
 	tempObj->addChild(new GameObject("sun", tempObj, objects["teapot"], textures["sun"], shaders["main"]));	//creating object
 	tempObj->getChild("sun")->addComponent(RENDER_COMPONENT);	//adding render comp
-	tempObj->getChild("sun")->setPosition(vec3(2, 100, 0));	//changing postiion
+	tempObj->getChild("sun")->setPosition(vec3(0, 25, 0));	//changing postiion
 	tempObj->getChild("sun")->setRotation(vec3(0, 0, 0));	//change rotaion
-	tempObj->getChild("sun")->setScale(vec3(2, 2, 2));	//change scele
-	tempObj->getChild("sun")->setForceRender(true);
+	tempObj->getChild("sun")->setScale(vec3(5, 5, 5));	//change scele
 
 	//tempObj->addChild(new GameObject("teapotRoom", tempObj, objects["teapotRoom"], textures["teapotRoom"], shaders["main"]));	//creating object
 	//tempObj->getChild("teapotRoom")->addComponent(RENDER_COMPONENT);	//adding render comp
@@ -282,7 +277,7 @@ void SpaceScene::createScene()
 	//tempObj->getChild("teapotRoom")->setScale(vec3(1, 1, 1));	//change scele
 
 
-	////lander room node
+	//															//lander room node
 	//worldObject->addChild(new GameObject("apolloRoomNode", worldObject));	//creating node
 	//tempObj = worldObject->getChild("apolloRoomNode"); //setting temp object for easy access
 	//tempObj->setActive(false);
@@ -293,7 +288,7 @@ void SpaceScene::createScene()
 	//tempObj->getChild("LanderRoom")->setRotation(vec3(0, 0, 0));	//change rotaion
 	//tempObj->getChild("LanderRoom")->setScale(vec3(1, 1, 1));	//change scele
 
-	////walker room node
+	//															//walker room node
 	//worldObject->addChild(new GameObject("walkerNode", worldObject));	//creating node
 	//tempObj = worldObject->getChild("walkerNode"); //setting temp object for easy access
 	//tempObj->setActive(false);
@@ -304,11 +299,11 @@ void SpaceScene::createScene()
 	//tempObj->getChild("walkerRoom")->setRotation(vec3(0, 0, 0));	//change rotaion
 	//tempObj->getChild("walkerRoom")->setScale(vec3(3, 3, 3));	//change scele
 
-	//set skybox
-	worldObject->addChild(new GameObject("skybox", worldObject, objects["cubeMesh"], skyMaterial, shaders["main"]));
-	worldObject->getChild("skybox")->addComponent(RENDER_COMPONENT);
-	worldObject->getChild("skybox")->setForceRender(true);
-	worldObject->getChild("skybox")->setScale(vec3(200, 200, 200));	//change scele
+																//set skybox
+	//worldObject->addChild(new GameObject("skybox", worldObject, objects["cubeMesh"], skyMaterial, shaders["main"]));
+	//worldObject->getChild("skybox")->addComponent(RENDER_COMPONENT);
+	//worldObject->getChild("skybox")->setForceRender(true);
+	//worldObject->getChild("skybox")->setScale(vec3(20, 20, 20));	//change scele
 
 	cout << "world: " << worldObject->getName() << " components: ";
 	worldObject->printComponents();
@@ -351,7 +346,7 @@ void SpaceScene::createScene()
 
 
 	CreateFrameBuffer();
-	
+
 }
 
 void SpaceScene::ShadowFramebuffer()
@@ -446,7 +441,7 @@ void SpaceScene::RenderQuad()
 		GL_FALSE,           // normalized?
 		0,                  // stride
 		(void*)0            // array buffer offset
-		);
+	);
 
 	glDisableVertexAttribArray(0);
 
@@ -456,17 +451,14 @@ void SpaceScene::destroyScene()
 {
 	shaders["main"]->cleanUp();
 	shaders["sky"]->cleanUp();
-	shaders["shadowMap"]->cleanUp();	
+	shaders["shadowMap"]->cleanUp();
 	objects["teapot"]->cleanUp();
 	objects["cubeMesh"]->cleanUp();
-
-	delete bulPhys;
 }
 
 void SpaceScene::SceneLoop()
 {
 	windowLoop();
-	update();
 	//ShadowMapPass();
 	render();
 	//RenderQuad();
@@ -562,9 +554,6 @@ void SpaceScene::onKeyDown(SDL_Keycode key)
 		{
 			editor->readCommand();
 		}
-		break;
-	case SDLK_ESCAPE:
-		GameRunning = false;
 		break;
 	case SDLK_m:
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -672,7 +661,7 @@ void SpaceScene::CreateFrameBuffer()
 		GL_FALSE,           // take our values as-is
 		0,                  // no extra data between each position
 		0                   // offset of first element
-		);
+	);
 }
 
 void SpaceScene::CleanUpFrameBuffer()

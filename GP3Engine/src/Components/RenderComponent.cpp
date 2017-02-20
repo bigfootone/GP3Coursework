@@ -28,11 +28,11 @@ void Renderer::update(mat4 MVPMat)
 
 void Renderer::render()
 {
-	if (owner->getCurScene()->getActiveShader() != owner->getShader()->getShader())
-	{
+	//if (owner->getCurScene()->getActiveShader() != owner->getShader()->getShader())
+	//{
 		glUseProgram(owner->getShader()->getShader());
 		owner->getCurScene()->setActiveShader(owner->getShader()->getShader());
-	}
+	//}
 
 	if (!owner->getTexture()->getTex2D())
 	{
@@ -64,10 +64,10 @@ void Renderer::render()
 		glUniform1i(cubeTexLocation, 1);
 	}
 
-	GLint toonShadeLocation = glGetUniformLocation(owner->getShader()->getShader(), "toonShade");
+	/*GLint toonShadeLocation = glGetUniformLocation(owner->getShader()->getShader(), "toonShade");
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_1D, owner->getTexture()->getTexture());
-	glUniform1i(toonShadeLocation, 1);
+	glUniform1i(toonShadeLocation, 1);*/
 
 	glBindVertexArray(owner->getModel()->getVAO());
 	//begin drawing triangle 
