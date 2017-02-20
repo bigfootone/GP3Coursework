@@ -118,7 +118,7 @@ void BulletPhys::CreatePhysSphere()
 	btTransform startTransform;
 	startTransform.setIdentity();
 
-	btScalar	mass(1.f);
+	btScalar	mass(100.f);
 
 	//rigidbody is dynamic if and only if mass is non zero, otherwise static
 	bool isDynamic = (mass != 0.f);
@@ -140,6 +140,8 @@ void BulletPhys::CreatePhysSphere()
 void BulletPhys::updatePhysics()
 {
 	dynamicsWorld->stepSimulation(1.f / 60.f, 10);
+
+	dynamicsWorld->debugDrawWorld();
 
 	//print positions of all objects
 	for (int j = dynamicsWorld->getNumCollisionObjects() - 1; j >= 0; j--)
