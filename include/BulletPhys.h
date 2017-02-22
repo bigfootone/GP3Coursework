@@ -8,8 +8,8 @@ public:
 	BulletPhys();
 	~BulletPhys();
 	void CreateGroundPlane();
-	void CreatePhysBox();
-	void CreatePhysSphere();
+	btRigidBody* CreatePhysBox(btVector3 StartPos, float TempMass, btVector3 size);
+	btRigidBody* CreatePhysSphere(btVector3 StartPos, float TempMass, double radius);
 	void updatePhysics();
 	btRigidBody* getRidgidBody(int ID);
 	btVector3 getPosition(btRigidBody* body);

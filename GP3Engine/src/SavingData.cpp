@@ -86,7 +86,7 @@ XMLError saveObject(GameObject* tempObject, XMLElement* parentNode, XMLDocument*
 	for (auto i = tempObject->getCompMap()->begin(); i != tempObject->getCompMap()->end(); i++)
 	{
 		XMLElement * loopElement = doc->NewElement("component");
-		loopElement->SetText(i->first);
+		//TODO fix editor loopElement->SetText(i->first);
 		nameElement->InsertEndChild(loopElement);
 	}
 	objectElement->InsertEndChild(nameElement);
@@ -241,7 +241,7 @@ XMLError loadObject(GameObject* tempParent, XMLElement* parentNode, Scene* curSc
 	while (loopElement != nullptr)
 	{
 		eResult = loopElement->QueryIntText(&outInt);
-		tempParent->getChild(outName)->addComponent((Components)outInt);
+		//TODO fix editor tempParent->getChild(outName)->addComponent((Components)outInt);
 		if (outInt == INPUT_COMPONENT)
 		{
 			tempParent->getChild(outName)->setInput(curScene->getInput());

@@ -75,11 +75,11 @@ void BulletPhys::CreateGroundPlane()
 	dynamicsWorld->addRigidBody(body);
 }
 
-void BulletPhys::CreatePhysBox()
+btRigidBody* BulletPhys::CreatePhysBox(btVector3 StartPos, float TempMass, btVector3 size)
 {
 	//create a dynamic rigidbody
 
-	btCollisionShape* colShape = new btBoxShape(btVector3(1,1,1));
+	btCollisionShape* colShape = new btBoxShape(size);
 	//btCollisionShape* colShape = new btSphereShape(btScalar(1.));
 	collisionShapes.push_back(colShape);
 
@@ -87,7 +87,7 @@ void BulletPhys::CreatePhysBox()
 	btTransform startTransform;
 	startTransform.setIdentity();
 
-	btScalar	mass(1.f);
+	btScalar	mass(TempMass);
 
 	//rigidbody is dynamic if and only if mass is non zero, otherwise static
 	bool isDynamic = (mass != 0.f);
@@ -96,7 +96,7 @@ void BulletPhys::CreatePhysBox()
 	if (isDynamic)
 		colShape->calculateLocalInertia(mass, localInertia);
 
-	startTransform.setOrigin(btVector3(2, 10, 0));
+	startTransform.setOrigin(StartPos);
 
 	//using motionstate is recommended, it provides interpolation capabilities, and only synchronizes 'active' objects
 	btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
@@ -104,21 +104,23 @@ void BulletPhys::CreatePhysBox()
 	btRigidBody* body = new btRigidBody(rbInfo);
 
 	dynamicsWorld->addRigidBody(body);
+
+	return body;
 }
 
-void BulletPhys::CreatePhysSphere()
+btRigidBody* BulletPhys::CreatePhysSphere(btVector3 StartPos, float TempMass, double radius)
 {
 	//create a dynamic rigidbody
 
 	//btCollisionShape* colShape = new btBoxShape(btVector3(1,1,1));
-	btCollisionShape* colShape = new btSphereShape(btScalar(1.));
+	btCollisionShape* colShape = new btSphereShape(btScalar(radius));
 	collisionShapes.push_back(colShape);
 
 	/// Create Dynamic Objects
 	btTransform startTransform;
 	startTransform.setIdentity();
 
-	btScalar	mass(100.f);
+	btScalar	mass(TempMass);
 
 	//rigidbody is dynamic if and only if mass is non zero, otherwise static
 	bool isDynamic = (mass != 0.f);
@@ -127,7 +129,7 @@ void BulletPhys::CreatePhysSphere()
 	if (isDynamic)
 		colShape->calculateLocalInertia(mass, localInertia);
 
-	startTransform.setOrigin(btVector3(2, 100, 0));
+	startTransform.setOrigin(StartPos);
 
 	//using motionstate is recommended, it provides interpolation capabilities, and only synchronizes 'active' objects
 	btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
@@ -135,6 +137,8 @@ void BulletPhys::CreatePhysSphere()
 	btRigidBody* body = new btRigidBody(rbInfo);
 
 	dynamicsWorld->addRigidBody(body);
+
+	return body;
 }
 
 void BulletPhys::updatePhysics()

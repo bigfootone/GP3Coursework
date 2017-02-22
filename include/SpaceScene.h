@@ -3,6 +3,7 @@
 
 #include "Scene.h"
 #include "BulletPhys.h"
+#include "physicsComponent.h"
 
 
 struct Light {

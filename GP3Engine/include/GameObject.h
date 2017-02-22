@@ -32,7 +32,7 @@ public:
 	//in .cpp
 	void update(mat4 VPMat);
 	void render(Fustrum *fustrum);
-	void addComponent(Components type);
+	void addComponent(Component *newComp);
 	void addChild(GameObject *tempChild);
 	void changePosition(vec3 tempPos);
 	GameObject *findChild(string com);
@@ -49,7 +49,7 @@ public:
 	GameObject *getChild(string tempName) { return childrenList[tempName]; };
 	string getName(){ return name; };
 	map<string, GameObject*> *getChildrenMap(){ return &childrenList; };
-	map<Components, Component*> *getCompMap(){ return &componentsList; };
+	map<string, Component*> *getCompMap(){ return &componentsList; };
 	bool getActive(){ return active; };
 	bool getWorld(){ return world; };
 	PlayerController *getInput(){ return input; };
@@ -80,7 +80,7 @@ private:
 	bool world;
 	bool active;
 	map<string, GameObject*> childrenList;
-	map<Components, Component*> componentsList;
+	map<string, Component*> componentsList;
 	Object *model;
 	Texture *texture;
 	Shader *shader;

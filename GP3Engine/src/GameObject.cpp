@@ -112,22 +112,10 @@ void GameObject::render(Fustrum* fustrum)
 	}
 }
 
-void GameObject::addComponent(Components type)
+void GameObject::addComponent(Component *newComp)
 {
-	switch (type)
-	{
-	case RENDER_COMPONENT:
-		cout << "adding render Comp to " << name << endl;
-		componentsList.insert(pair<Components, Component*>(type, new Renderer(this)));
-		break;
-	case INPUT_COMPONENT:
-		cout << "adding input Comp to " << name << endl;
-		componentsList.insert(pair<Components, Component*>(type, new InputComponent(this)));
-		break;
-	default:
-		cout << "error_1, gameObject.cpp - no component" << endl;
-		break;
-	}
+	cout << "adding render Comp to " << name << endl;
+	componentsList.insert(pair<string, Component*>(newComp->getType(), newComp));
 }
 
 void GameObject::addChild(GameObject *tempChild)

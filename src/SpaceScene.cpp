@@ -71,9 +71,6 @@ void SpaceScene::update()
 	GLenum err = GL_NO_ERROR;
 	input->Update();
 
-	btVector3 BTpos = bulPhys->getPosition(bulPhys->getRidgidBody(1));
-	vec3 vecPos = vec3(BTpos.x(), BTpos.y(), BTpos.z());
-	worldObject->getChild("SpaceNode")->getChild("sun")->setPosition(vecPos);
 	bulPhys->updatePhysics();
 	
 	
@@ -99,8 +96,8 @@ void SpaceScene::createScene()
 	// Accept fragment if it closer to the camera than the former one
 	glDepthFunc(GL_LESS);
 
-	editor = new Editor(this);
-	debugMode = false;
+	//editor = new Editor(this);
+	debugMode = true;
 
 	input = new PlayerController();
 	Object *tea = new Object();
@@ -109,7 +106,6 @@ void SpaceScene::createScene()
 	//bullet physics
 	bulPhys = new BulletPhys();
 	bulPhys->CreateGroundPlane();
-	bulPhys->CreatePhysSphere();
 
 	//create cubemap texture
 	skyMaterial = new CubeTexture("skybox");
@@ -163,7 +159,7 @@ void SpaceScene::createScene()
 
 	//player
 	worldObject->addChild(new GameObject("player", worldObject, input));
-	worldObject->getChild("player")->addComponent(INPUT_COMPONENT);
+	worldObject->getChild("player")->addComponent(new InputComponent(worldObject->getChild("player")));
 
 	//teapot room node done
 	worldObject->addChild(new GameObject("SpaceNode", worldObject));	//creating node
@@ -172,8 +168,9 @@ void SpaceScene::createScene()
 	tempObj->setActive(true);
 
 	tempObj->addChild(new GameObject("sun", tempObj, objects["teapot"], textures["sun"], shaders["main"]));	//creating object
-	tempObj->getChild("sun")->addComponent(RENDER_COMPONENT);	//adding render comp
-	tempObj->getChild("sun")->setPosition(vec3(0, 25, 0));	//changing postiion
+	tempObj->getChild("sun")->addComponent(new Renderer(tempObj->getChild("sun")));	//adding render comp
+	tempObj->getChild("sun")->addComponent(new physicsComponent(tempObj->getChild("sun"), bulPhys->CreatePhysSphere(btVector3(0, 100, 0), 1, 5.0))); //adding physics comp
+	tempObj->getChild("sun")->setPosition(vec3(0, 100, 0));	//changing postiion
 	tempObj->getChild("sun")->setRotation(vec3(0, 0, 0));	//change rotaion
 	tempObj->getChild("sun")->setScale(vec3(1, 1, 1));	//change scele
 	tempObj->getChild("sun")->setForceRender(true);
@@ -312,13 +309,10 @@ void SpaceScene::onKeyDown(SDL_Keycode key)
 		}
 		input->setDebug(debugMode);
 		break;
-	case SDLK_l:
-		if (debugMode)
-		{
-			editor->readCommand();
-		}
 	case SDLK_ESCAPE:
 		GameRunning = false;
+	case SDLK_e:
+		bulPhys->getRidgidBody(1)->applyForce(btVector3(0, 1000, 0), btVector3(0, 0, 0));
 	default:
 		break;
 	}
