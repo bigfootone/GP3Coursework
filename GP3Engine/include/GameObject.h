@@ -41,6 +41,7 @@ public:
 
 	//getters
 	vec3 getLocalPos(){ return localPos; };
+	vec3 getWorldPos();
 	vec3 getScale(){ return size; };
 	vec3 getRotation(){ return rotation; };
 	Object *getModel(){ return model; };

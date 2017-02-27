@@ -3,9 +3,10 @@
 
 void checkError(const char *file, int line)
 {
-	GLenum err = glGetError();
+	//TODO fix texturing issue
+	/*GLenum err = glGetError();
 	if (err != GL_NO_ERROR)
-		printf("%s:%d - GL Error: %s\n", file, line, gluErrorString(err));
+		printf("%s:%d - GL Error: %s\n", file, line, gluErrorString(err));*/
 }
 
 //function to initalise OpenGL

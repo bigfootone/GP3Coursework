@@ -163,3 +163,14 @@ void GameObject::printComponents()
 	}
 	cout << endl;
 }
+
+vec3 GameObject::getWorldPos()
+{
+	vec3 TempPos = localPos;
+	if (world == false)
+	{
+		TempPos += parent->getWorldPos();
+	}
+	return TempPos;
+
+}

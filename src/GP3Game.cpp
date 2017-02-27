@@ -48,6 +48,20 @@ bool GP3Game::gameLoop()
 				var->mouseMove(event.motion);
 			}
 		}
+		if (event.type == SDL_MOUSEBUTTONDOWN)
+		{
+			for each (auto var in keyboardListeners)
+			{
+				var->mouseDown(event.button);
+			}
+		}
+		if (event.type == SDL_MOUSEBUTTONUP)
+		{
+			for each (auto var in keyboardListeners)
+			{
+				var->mouseUp(event.button);
+			}
+		}
 	}
 
 	currentScene->SceneLoop();

@@ -75,11 +75,11 @@ void BulletPhys::CreateGroundPlane()
 	dynamicsWorld->addRigidBody(body);
 }
 
-btRigidBody* BulletPhys::CreatePhysBox(btVector3 StartPos, float TempMass, btVector3 size)
+btRigidBody* BulletPhys::CreatePhysBox(btVector3 StartPos, float TempMass, int ID)
 {
 	//create a dynamic rigidbody
 
-	btCollisionShape* colShape = new btBoxShape(size);
+	btCollisionShape* colShape = collisionShapes[ID];
 	//btCollisionShape* colShape = new btSphereShape(btScalar(1.));
 	collisionShapes.push_back(colShape);
 
@@ -108,38 +108,20 @@ btRigidBody* BulletPhys::CreatePhysBox(btVector3 StartPos, float TempMass, btVec
 	return body;
 }
 
-btRigidBody* BulletPhys::CreatePhysSphere(btVector3 StartPos, float TempMass, double radius)
+int BulletPhys::CreateBoxShape(btVector3 size)
 {
-	//create a dynamic rigidbody
-
-	//btCollisionShape* colShape = new btBoxShape(btVector3(1,1,1));
-	btCollisionShape* colShape = new btSphereShape(btScalar(radius));
+	btCollisionShape* colShape = new btBoxShape(size);
 	collisionShapes.push_back(colShape);
-
-	/// Create Dynamic Objects
-	btTransform startTransform;
-	startTransform.setIdentity();
-
-	btScalar	mass(TempMass);
-
-	//rigidbody is dynamic if and only if mass is non zero, otherwise static
-	bool isDynamic = (mass != 0.f);
-
-	btVector3 localInertia(0, 0, 0);
-	if (isDynamic)
-		colShape->calculateLocalInertia(mass, localInertia);
-
-	startTransform.setOrigin(StartPos);
-
-	//using motionstate is recommended, it provides interpolation capabilities, and only synchronizes 'active' objects
-	btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
-	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, colShape, localInertia);
-	btRigidBody* body = new btRigidBody(rbInfo);
-
-	dynamicsWorld->addRigidBody(body);
-
-	return body;
+	return (collisionShapes.size() - 1);
 }
+
+int BulletPhys::CreateSphereShape(double size)
+{
+	btCollisionShape* colShape = new btSphereShape(btScalar(size));
+	collisionShapes.push_back(colShape);
+	return (collisionShapes.size() - 1);
+}
+
 
 void BulletPhys::updatePhysics()
 {
@@ -162,7 +144,7 @@ void BulletPhys::updatePhysics()
 		{
 			trans = obj->getWorldTransform();
 		}
-		printf("world pos object %d = %f,%f,%f\n", j, float(trans.getOrigin().getX()), float(trans.getOrigin().getY()), float(trans.getOrigin().getZ()));
+		//printf("world pos object %d = %f,%f,%f\n", j, float(trans.getOrigin().getX()), float(trans.getOrigin().getY()), float(trans.getOrigin().getZ()));
 	}
 }
 

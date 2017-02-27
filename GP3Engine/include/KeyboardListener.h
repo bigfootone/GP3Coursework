@@ -10,6 +10,8 @@ public:
 	virtual void onKeyDown(SDL_Keycode key) = 0;
 	virtual void onkeyUp(SDL_Keycode key) = 0;
 	virtual void mouseMove(SDL_MouseMotionEvent motion) = 0;
+	virtual void mouseDown(SDL_MouseButtonEvent button) = 0;
+	virtual void mouseUp(SDL_MouseButtonEvent button) = 0;
 
 
 private:

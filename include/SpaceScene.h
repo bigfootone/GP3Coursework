@@ -4,6 +4,8 @@
 #include "Scene.h"
 #include "BulletPhys.h"
 #include "physicsComponent.h"
+#include "GameInputComponent.h"
+#include "GamePlayerController.h"
 
 
 struct Light {
@@ -37,6 +39,8 @@ public:
 	void onKeyDown(SDL_Keycode key) override;
 	void onkeyUp(SDL_Keycode key) override;
 	void mouseMove(SDL_MouseMotionEvent motion) override;
+	void mouseDown(SDL_MouseButtonEvent button) override {};
+	void mouseUp(SDL_MouseButtonEvent button)override {};
 
 	//ShadowMapping
 	void ShadowFramebuffer();
@@ -124,6 +128,10 @@ private:
 
 	//bullet physics 
 	BulletPhys *bulPhys;
+
+	//physic shape ID
+	int TestSphereID;
+	int missileBoxID;
 };
 
 #endif

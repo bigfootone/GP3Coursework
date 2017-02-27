@@ -99,13 +99,15 @@ void SpaceScene::createScene()
 	//editor = new Editor(this);
 	debugMode = true;
 
-	input = new PlayerController();
+	input = new GamePlayerController();
 	Object *tea = new Object();
 	tea->createBuffer("/utah-teapot.fbx");
 
 	//bullet physics
 	bulPhys = new BulletPhys();
 	bulPhys->CreateGroundPlane();
+	TestSphereID = bulPhys->CreateSphereShape(5.0);
+	missileBoxID = bulPhys->CreateBoxShape(btVector3(5, 3, 3));
 
 	//create cubemap texture
 	skyMaterial = new CubeTexture("skybox");
@@ -146,7 +148,7 @@ void SpaceScene::createScene()
 	shaders["sky"]->createShader();
 
 	//create player/debug cam
-	input = new PlayerController();
+	input = new GamePlayerController();
 	fustrum = new Fustrum(input);
 	fustrum->setUpCamera();
 	fustrum->updateCamera();
@@ -159,7 +161,9 @@ void SpaceScene::createScene()
 
 	//player
 	worldObject->addChild(new GameObject("player", worldObject, input));
-	worldObject->getChild("player")->addComponent(new InputComponent(worldObject->getChild("player")));
+	GameInputComponent *inputComp = new GameInputComponent(worldObject->getChild("player"));
+	inputComp->assignMissile(objects["teapot"], shaders["main"], textures["sun"], missileBoxID, bulPhys);
+	worldObject->getChild("player")->addComponent(inputComp);
 
 	//teapot room node done
 	worldObject->addChild(new GameObject("SpaceNode", worldObject));	//creating node
@@ -169,7 +173,7 @@ void SpaceScene::createScene()
 
 	tempObj->addChild(new GameObject("sun", tempObj, objects["teapot"], textures["sun"], shaders["main"]));	//creating object
 	tempObj->getChild("sun")->addComponent(new Renderer(tempObj->getChild("sun")));	//adding render comp
-	tempObj->getChild("sun")->addComponent(new physicsComponent(tempObj->getChild("sun"), bulPhys->CreatePhysSphere(btVector3(0, 100, 0), 1, 5.0))); //adding physics comp
+	tempObj->getChild("sun")->addComponent(new physicsComponent(tempObj->getChild("sun"), bulPhys->CreatePhysBox(btVector3(0, 100, 0), 1, TestSphereID))); //adding physics comp
 	tempObj->getChild("sun")->setPosition(vec3(0, 100, 0));	//changing postiion
 	tempObj->getChild("sun")->setRotation(vec3(0, 0, 0));	//change rotaion
 	tempObj->getChild("sun")->setScale(vec3(1, 1, 1));	//change scele
