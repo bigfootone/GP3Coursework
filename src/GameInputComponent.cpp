@@ -58,9 +58,12 @@ void GameInputComponent::mouseDown(SDL_MouseButtonEvent button)
 
 		missileCount++;
 		btVector3 FirePosition = btVector3(owner->getWorldPos().x, owner->getWorldPos().y, owner->getWorldPos().z);
-		cout << "position " << owner->getWorldPos().x << " " << owner->getWorldPos().y << " " << owner->getWorldPos().z << endl;
+		//cout << "position " << owner->getWorldPos().x << " " << owner->getWorldPos().y << " " << owner->getWorldPos().z << endl;
 		btRigidBody* missile1 = bulPhys->CreatePhysBox(FirePosition, 1, missileShapeID);
-		//missile1->applyForce(btVector3(0, 100, 0), btVector3(0, 100, 0));
+		//TODO set the firce direction forward
+
+		btVector3 fireForce = btVector3(playerCon->getlookAtPoint().x * 1000, playerCon->getlookAtPoint().y * 1000, playerCon->getlookAtPoint().z * 1000);
+		missile1->applyForce(fireForce, FirePosition);
 		
 		owner->getChild(TempName)->addComponent(new physicsComponent(owner->getChild(TempName), missile1)); //adding physics comp
 		owner->getChild(TempName)->setPosition(vec3(0,0,0));	//changing postiion
