@@ -80,7 +80,7 @@ private:
 	const int FRAME_BUFFER_WIDTH = 640;
 	const int FRAME_BUFFER_HEIGHT = 480;
 	GLuint FBODepthBuffer;
-	GLuint frameBufferObject;
+	GLuint frameBufferObject = 0;
 	GLuint fullScreenVAO;
 	GLuint fullScreenVBO;
 	GLuint fullScreenShaderProgram;

@@ -22,12 +22,15 @@ SpaceScene::~SpaceScene()
 
 void SpaceScene::render()
 {
-
+	CHECK_GL_ERROR();
 	//set the clear colour background 
 	glClearColor(0.0f, 0.0f, 1.0f, 0.5f);
+	CHECK_GL_ERROR();
 
 	glBindFramebuffer(GL_FRAMEBUFFER, frameBufferObject);
+	CHECK_GL_ERROR();
 	glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	CHECK_GL_ERROR();
 
 	//clear the color and depth buffer
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -41,10 +44,10 @@ void SpaceScene::render()
 	//glCullFace(GL_BACK);
 
 
-	//glUseProgram(shaders["shadowMap"]->getShader());
+	glUseProgram(shaders["main"]->getShader());
 	//update();
 
-
+	CHECK_GL_ERROR();
 	glUniformMatrix4fv(MVPLocation, 1, GL_FALSE, &input->getMVPmatrix()[0][0]);
 	glUniformMatrix4fv(modelLocation, 1, GL_FALSE, &ModelMatrix[0][0]);
 	glUniform1f(materialShininessLoc, materialShininess);
@@ -54,10 +57,13 @@ void SpaceScene::render()
 	glUniform1f(gLightAttenuationLoc, gLight.attenuation);
 	glUniform1f(gLightAmbientCoeLoc, gLight.ambientCoefficient);
 	glUniform3f(cameraPosLoc, input->getWorldPoint().x, input->getWorldPoint().y, input->getWorldPoint().z);
+	CHECK_GL_ERROR();
 
 	glUniform1i(textureSamplerLocation, 0);
+	CHECK_GL_ERROR();
 
 	glDepthMask(GL_TRUE);
+	CHECK_GL_ERROR();
 
 	worldObject->render(fustrum);
 
@@ -90,18 +96,20 @@ void SpaceScene::update()
 
 void SpaceScene::createScene()
 {
+	cout << "creating space scene" << endl;
+
 	//CreateFrameBuffer(); ENable for post processing
 	glEnable(GL_DEPTH_TEST);
+	CHECK_GL_ERROR();
 
 	// Accept fragment if it closer to the camera than the former one
 	glDepthFunc(GL_LESS);
+	CHECK_GL_ERROR();
 
 	//editor = new Editor(this);
 	debugMode = true;
 
 	input = new GamePlayerController();
-	Object *tea = new Object();
-	tea->createBuffer("/utah-teapot.fbx");
 
 	//bullet physics
 	bulPhys = new BulletPhys();
@@ -121,21 +129,21 @@ void SpaceScene::createScene()
 
 	//create objects
 	objects.insert(pair<string, Object*>("teapot", new Object("teapot")));
-	objects["teapot"]->createBuffer("/utah-teapot.FBX");
+	objects["teapot"]->createBuffer("/heroWalker.FBX");
 
-	objects.insert(pair<string, Object*>("cubeMesh", new Cube("cubeMesh")));
-	objects["cubeMesh"]->createBuffer();
+	//objects.insert(pair<string, Object*>("cubeMesh", new Cube("cubeMesh")));
+	//objects["cubeMesh"]->createBuffer();
 
 	//create textures
 	textures.insert(pair<string, Texture*>("sun", new Texture("sun")));
 	textures["sun"]->createTexture("/SunTexture.png");
 
 	//create shaders
-	Shader * s = new Shader("main");
-	s->attatchVertexShader("/textureVS.glsl");
-	s->attatchFragmentShader("/textureFS.glsl");
-	s->createShader();
-	shaders.insert(pair<string, Shader*>("main", s));
+	Shader * currentShader = new Shader("main");
+	currentShader->attatchVertexShader("/final Shaders/textureSpecularVS.glsl");
+	currentShader->attatchFragmentShader("/final Shaders/textureSpecularFS.glsl");
+	currentShader->createShader();
+	shaders.insert(pair<string, Shader*>("main", currentShader));
 
 	shaders.insert(pair<string, Shader*>("toonMaterial", new Shader("toonMaterial")));
 	shaders["toonMaterial"]->attatchVertexShader("/specularVS.glsl");
@@ -197,10 +205,30 @@ void SpaceScene::createScene()
 	}
 
 	materialShininess = 100;
-	gLight.position = glm::vec3(10, 50, 10);
+	gLight.position = glm::vec3(0, 130, 0);
 	gLight.intensities = glm::vec3(1.0f, 1.0f, 1.0f); //white
 	gLight.attenuation = 1.0f;
 	gLight.ambientCoefficient = 0.305f;
+
+	GLuint shaderID = shaders["main"]->getShader();
+
+	textureSamplerLocation = glGetUniformLocation(shaderID, "texture0");
+	MVPLocation = glGetUniformLocation(shaderID, "MVP");
+	materialShininessLoc = glGetUniformLocation(shaderID, "materialShininess");
+	materialSPecularLoc = glGetUniformLocation(shaderID, "materialSpecularColor");
+	gLightPosLoc = glGetUniformLocation(shaderID, "light.position");
+	gLightIntensitiesLoc = glGetUniformLocation(shaderID, "light.intensities");
+	gLightAttenuationLoc = glGetUniformLocation(shaderID, "light.attenuation");
+	gLightAmbientCoeLoc = glGetUniformLocation(shaderID, "light.ambientCoefficient");
+	cameraPosLoc = glGetUniformLocation(shaderID, "cameraPosition");
+	//viewLocation = glGetUniformLocation(shaderID, "V");
+	modelLocation = glGetUniformLocation(shaderID, "M");
+	//depthBiasLocation = glGetUniformLocation(shaderID, "DepthBiasMVP");
+	//shadowMapLocation = glGetUniformLocation(shaderID, "shadowMap");
+	//lightLocation = glGetUniformLocation(shaderID, "LightInvDirection");
+	//lightId = glGetUniformLocation(shaderID, "LightPosition_worldspace");
+
+	CHECK_GL_ERROR();
 }
 
 
@@ -219,7 +247,7 @@ void SpaceScene::destroyScene()
 	shaders["main"]->cleanUp();
 	shaders["sky"]->cleanUp();
 	objects["teapot"]->cleanUp();
-	objects["cubeMesh"]->cleanUp();
+	//objects["cubeMesh"]->cleanUp();
 }
 
 void SpaceScene::SceneLoop()
