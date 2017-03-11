@@ -98,14 +98,14 @@ void Editor::readCommand()
 		{
 			//atm just one scene to keep it easy
 			cout << "saving" << endl;
-			saveScene(curScene->getWorldObject(), curScene->getName());
+			//saveScene(curScene->getWorldObject(), curScene->getName());
 		}
 		else if (com == "load")
 		{
 			cout << "select scene" << endl;
 			cin >> com;
 			cout << "loading" << endl;
-			loadScene(curScene->getWorldObject(), com, curScene);
+			//loadScene(curScene->getWorldObject(), com, curScene);
 		}
 		else
 		{
@@ -163,7 +163,7 @@ void Editor::spawnObject()
 		cout << "spawning object" << endl;
 		curGameObject->addChild(new GameObject(curName, curGameObject, curMesh, curTexture, curShader));
 		curGameObject = curGameObject->findChild(curName);
-		curGameObject->addComponent(RENDER_COMPONENT);
+		curGameObject->addComponent(new Renderer());
 	}
 	else
 	{

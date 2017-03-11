@@ -1,22 +1,13 @@
-GP2BaseCode
+Engine Authors
 ===========
 
 Alexander MacDiarmid - S1307325
-	Engine architect
-	View Fustrum Culling
-	world editor
 	
 David Stuart - S1313657
-	input controls
-	enviroment mapping 
-	toon shading
 	
 Ricardo Barros - S13140840
-	lights 
-	backed shadows 
-	shadow mapping 
 	
-controls:
+controls for Example game Project:
 	w, a, s, d - move 
 	mouse - look 
 	1 - empty room

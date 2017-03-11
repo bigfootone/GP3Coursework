@@ -18,7 +18,8 @@ void createWindow(string gameName)
 	//ask for version 4.2 of openGL
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 4);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+	//SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+
 	//create a window 
 
 	window = SDL_CreateWindow(gameName.c_str(), //window title
@@ -28,13 +29,13 @@ void createWindow(string gameName)
 		SCREEN_HEIGHT, //height in pixels 
 		SDL_WINDOW_OPENGL //flags
 		);
-
 	//create an openGL context associated with the window
 	glContext = SDL_GL_CreateContext(window);
 
 	//initalisation
 	//call our initOpenGL function
 	initOpenGL();
+
 	//set our viewport
 	setViewport(SCREEN_WIDTH, SCREEN_HEIGHT);
 
@@ -43,6 +44,7 @@ void createWindow(string gameName)
 	{
 		//Process/log the error.
 		cout << "error in creating window " << err << endl;
+		//TODO error in creating window 1280?
 	}
 }
 
@@ -63,7 +65,7 @@ void destroyWindow()
 }
 
 void windowLoop()
-		{
+{
 	//call swap so that our GL back buffer is displayed
 	SDL_GL_SwapWindow(window);
 }

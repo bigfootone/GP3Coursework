@@ -116,17 +116,21 @@ void Shader::createShader()
 	finalShader = glCreateProgram();
 	glAttachShader(finalShader, vertexShader);
 	glAttachShader(finalShader, fragmentShader);
+	CHECK_GL_ERROR();
 
-	glBindAttribLocation(finalShader, 0, "vertexPosition");
+	/*glBindAttribLocation(finalShader, 0, "vertexPosition");
 	glBindAttribLocation(finalShader, 1, "vertexColour");
 	glBindAttribLocation(finalShader, 2, "vertexTexCoords");
 	glBindAttribLocation(finalShader, 3, "vertexNormal");
+	CHECK_GL_ERROR();*/
 
 	glLinkProgram(finalShader);
 	checkForLinkErrors(finalShader);
+	CHECK_GL_ERROR();
 
-	glDeleteShader(fragmentShader);
-	glDeleteShader(vertexShader);
+	//glDeleteShader(fragmentShader);
+	//glDeleteShader(vertexShader);
+	CHECK_GL_ERROR();
 
 	GLenum err = GL_NO_ERROR;
 	while ((err = glGetError()) != GL_NO_ERROR)

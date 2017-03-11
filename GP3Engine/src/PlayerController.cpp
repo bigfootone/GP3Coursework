@@ -83,4 +83,5 @@ void PlayerController::Update()
 	projMatrix = perspective(FOV, getRatio(), NEAR_CLIPPINGPLANE, FAR_CLIPPINGPLANE);
 	viewMatrix = lookAt(position, position + direction, upPoint);
 	MVPMatrix = projMatrix*viewMatrix;
+	//std::cout << (float)position.x << " " << (float)position.y << " " << (float)position.z << "\n" << (float)direction.x << " " << (float)direction.y << " " << (float)direction.z << " " << endl;
 }

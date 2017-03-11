@@ -5,7 +5,7 @@
 
 class PlayerController
 {
-private:
+protected:
 	//vectors
 	vec3 position;
 	vec3 direction;
@@ -33,10 +33,10 @@ public:
 	~PlayerController();
 	
 	//Camera LookAt
-	void moveForward();
-	void moveBackward();
-	void strafeRight();
-	void strafeLeft();
+	virtual void moveForward();
+	virtual void moveBackward();
+	virtual void strafeRight();
+	virtual void strafeLeft();
 	void mouseMovment(vec2 mousePos);
 
 	void Update();

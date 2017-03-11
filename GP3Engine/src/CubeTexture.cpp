@@ -54,8 +54,11 @@ GLuint loadCubeMap(const string& filenamePosZ, const string& filenameNegZ, const
 {
 	GLuint textureID;
 	glActiveTexture(GL_TEXTURE1);
+	CHECK_GL_ERROR();
 	glGenTextures(1, &textureID);
+	CHECK_GL_ERROR();
 	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+	CHECK_GL_ERROR();
 
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_GENERATE_MIPMAP, GL_TRUE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -63,6 +66,8 @@ GLuint loadCubeMap(const string& filenamePosZ, const string& filenameNegZ, const
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	CHECK_GL_ERROR();
+	//TODO fic invalid enum
 
 	loadCubeMapFace(filenamePosX, GL_TEXTURE_CUBE_MAP_POSITIVE_X);
 	loadCubeMapFace(filenameNegX, GL_TEXTURE_CUBE_MAP_NEGATIVE_X);
@@ -70,6 +75,7 @@ GLuint loadCubeMap(const string& filenamePosZ, const string& filenameNegZ, const
 	loadCubeMapFace(filenameNegY, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y);
 	loadCubeMapFace(filenamePosZ, GL_TEXTURE_CUBE_MAP_POSITIVE_Z);
 	loadCubeMapFace(filenameNegZ, GL_TEXTURE_CUBE_MAP_NEGATIVE_Z);
+	CHECK_GL_ERROR();
 
 
 

@@ -1,7 +1,9 @@
-#version 330 core
-in vec3 vertexPosition;
-in vec3 vertexNormal;
-in vec2 vertexTexCoords;
+#version 420
+
+layout(location = 0) in vec3 vertexPosition;
+layout(location = 1) in vec4 vertexColor;
+layout(location = 2) in vec2 vertexTexCoords;
+layout(location = 3) in vec3 vertexNormal;
 
 out vec3 Normal;
 out vec3 FragPos; 
@@ -16,8 +18,8 @@ void main()
 {
     gl_Position = MVP * vec4(vertexPosition, 1.0f);
     FragPos = vec3(model * vec4(vertexPosition, 1.0f));
-  //  Normal = mat3(transpose(inverse(model))) * vertexNormal;  
-    Normal = normalize(model * vec4(vertexNormal, 1)).xyz;
+	//Normal = mat3(transpose(inverse(model))) * vertexNormal;  
+    Normal = normalize(model * vec4(vertexNormal, 0)).xyz;
 	//Normal = model *vec4(vertexNormal, 1);
 	cameraDirectionOut = normalize(viewPos - FragPos);
     TexCoords = vertexTexCoords;

@@ -1,7 +1,11 @@
-#ifndef _HOLOROOMSCENE_H
-#define _HOLOROOMSCENE_H
+#ifndef _SpaceScene_H
+#define _SpaceScene_H
 
 #include "Scene.h"
+#include "BulletPhys.h"
+#include "physicsComponent.h"
+#include "GameInputComponent.h"
+#include "GamePlayerController.h"
 
 
 struct Light {
@@ -11,12 +15,12 @@ struct Light {
 	float ambientCoefficient;
 };
 
-class HoloRoomScene : public IkeyboardListener, public Scene 
+class SpaceScene : public IkeyboardListener, public Scene 
 {
 public:
-	HoloRoomScene();
-	HoloRoomScene(string name);
-	~HoloRoomScene();
+	SpaceScene();
+	SpaceScene(string name);
+	~SpaceScene();
 
 	void update() override;
 	void render() override;
@@ -35,6 +39,8 @@ public:
 	void onKeyDown(SDL_Keycode key) override;
 	void onkeyUp(SDL_Keycode key) override;
 	void mouseMove(SDL_MouseMotionEvent motion) override;
+	void mouseDown(SDL_MouseButtonEvent button) override {};
+	void mouseUp(SDL_MouseButtonEvent button)override {};
 
 	//ShadowMapping
 	void ShadowFramebuffer();
@@ -74,7 +80,7 @@ private:
 	const int FRAME_BUFFER_WIDTH = 640;
 	const int FRAME_BUFFER_HEIGHT = 480;
 	GLuint FBODepthBuffer;
-	GLuint frameBufferObject;
+	GLuint frameBufferObject = 0;
 	GLuint fullScreenVAO;
 	GLuint fullScreenVBO;
 	GLuint fullScreenShaderProgram;
@@ -120,6 +126,12 @@ private:
 	GLboolean sepia = false;
 	//woo we're the best
 
+	//bullet physics 
+	BulletPhys *bulPhys;
+
+	//physic shape ID
+	int TestSphereID;
+	int missileBoxID;
 };
 
 #endif

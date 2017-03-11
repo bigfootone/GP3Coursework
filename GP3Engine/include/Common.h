@@ -38,6 +38,8 @@ const string SCENE_PATH = "/scenes";
 
 void checkError(const char *file, int line);
 
+extern bool GameRunning;
+
 #ifdef _DEBUG
 #define CHECK_GL_ERROR() checkError(__FILE__, __LINE__)
 #else
