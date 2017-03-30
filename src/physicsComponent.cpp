@@ -13,6 +13,7 @@ physicsComponent::physicsComponent(GameObject *tempOwner, btRigidBody* tempRidgi
 	type = "physics component";
 	owner = tempOwner;
 	ridgidBody = tempRidgidBody;
+	ridgidBody->setUserPointer(owner);
 }
 
 physicsComponent::~physicsComponent()
@@ -34,7 +35,7 @@ void physicsComponent::update(mat4 MVPMat)
 	vec3 vecRot = vec3(BTrot.x(), BTrot.y(), BTrot.z());
 	
 	owner->setPosition(vecPos);
-	owner->setRotation(vecRot);
+	//owner->setRotation(vecRot);
 }
 
 string physicsComponent::getType()

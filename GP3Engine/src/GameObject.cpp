@@ -174,3 +174,8 @@ vec3 GameObject::getWorldPos()
 	return TempPos;
 
 }
+
+Component * GameObject::getComponents(string tempComp)
+{
+	return componentsList[tempComp];
+}

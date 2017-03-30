@@ -11,12 +11,12 @@ void GamePlayerController::FirePrimWeapon()
 
 void GamePlayerController::moveForward()
 {
-	position += direction * speed;
+	position += forward * speed;
 }
 
 void GamePlayerController::moveBackward()
 {
-	position -= direction * speed;
+	position -= forward * speed;
 }
 
 void GamePlayerController::strafeRight()

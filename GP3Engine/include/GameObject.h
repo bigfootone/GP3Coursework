@@ -58,6 +58,7 @@ public:
 	Scene *getCurScene(){ return curScene; };
 	MeshData getMesh(){ return mesh; };
 	bool getForceRender(){ return forceRender; }
+	Component* getComponents(string tempComp);
 
 	//setters
 	void setScale(vec3 tempScale){ size = tempScale; };

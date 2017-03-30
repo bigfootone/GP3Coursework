@@ -41,6 +41,13 @@ bool GP3Game::gameLoop()
 				var->onKeyDown(event.key.keysym.sym);
 			}
 		}
+		if (event.type == SDL_KEYUP)
+		{
+			for each (auto var in keyboardListeners)
+			{
+				var->onkeyUp(event.key.keysym.sym);
+			}
+		}
 		if (event.type == SDL_MOUSEMOTION)
 		{
 			for each (auto var in keyboardListeners)

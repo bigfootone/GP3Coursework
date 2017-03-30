@@ -74,6 +74,7 @@ void PlayerController::mouseMovment(vec2 mousePos)
 	direction = vec3(cos(VertAngle)*sin(horAngle), sin(VertAngle), cos(VertAngle)*cos(horAngle));
 
 	right = vec3(sin(horAngle - 3.14 / 2), 0, cos(horAngle - 3.14 / 2));
+	forward = vec3(cos(VertAngle)*sin(horAngle), 0, cos(VertAngle)*cos(horAngle));
 	upPoint = vec3(0, 1, 0);
 	//upPoint = cross(direction, right);
 }

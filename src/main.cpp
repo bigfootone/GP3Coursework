@@ -8,7 +8,7 @@ int main(int argc, char * arg[])
 
 	GameRunning = true;
 
-	createWindow("Space Decent");
+	createWindow("Space Doom");
 
 	GameApp *curGame = new GP3Game();
 

@@ -11,6 +11,7 @@ protected:
 	vec3 direction;
 	vec3 upPoint;
 	vec3 right;
+	vec3 forward;
 
 	//matrices
 	mat4 viewMatrix;
@@ -22,7 +23,7 @@ protected:
 	float horAngle = 3.14f;
 	float VertAngle = 0;
 	float mouseSpeed = 0.005f;
-	float speed = 3;
+	float speed = 1;
 
 	float fixedHeight = 0;
 	vec3 center = position;

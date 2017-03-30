@@ -8,36 +8,78 @@ GameInputComponent::GameInputComponent(GameObject *tempOwner)
 	owner = tempOwner;
 	keyboardListeners.push_back(this);
 	playerCon = (GamePlayerController*)owner->getInput();
-	missileCount = 0;
+	fireballCount = 0;
+	isMoveForward = false;
+	isMoveBack = false;
+	isMoveLeft = false;
+	isMoveRight = false;
 }
-
 
 GameInputComponent::~GameInputComponent()
 {
+
 }
+
+void GameInputComponent::update(mat4 MVPMat)
+{
+	if (isMoveForward == true)
+	{
+		owner->getInput()->moveForward();
+	}
+	if (isMoveBack  == true)
+	{
+		owner->getInput()->moveBackward();
+	}
+	if (isMoveLeft == true)
+	{
+		owner->getInput()->strafeLeft();
+	}
+	if (isMoveRight == true)
+	{
+		owner->getInput()->strafeRight();
+	}
+	owner->setPosition(owner->getInput()->getWorldPoint());
+}
+
 
 void GameInputComponent::onKeyDown(SDL_Keycode key)
 {
 	switch (key)
 	{
 	case SDLK_w:
-		owner->getInput()->moveForward();
+		isMoveForward = true;
+		isMoveBack = false;
 		break;
 	case SDLK_s:
-		owner->getInput()->moveBackward();
+		isMoveBack = true;
+		isMoveForward = false;
 		break;
 	case SDLK_a:
-		owner->getInput()->strafeLeft();
+		isMoveLeft = true;
 		break;
 	case SDLK_d:
-		owner->getInput()->strafeRight();
+		isMoveRight = true;
 		break;
 	}
-	owner->setPosition(owner->getInput()->getWorldPoint());
 }
 
 void GameInputComponent::onkeyUp(SDL_Keycode key)
 {
+	switch (key)
+	{
+	case SDLK_w:
+		isMoveForward = false;
+		break;
+	case SDLK_s:
+		isMoveBack = false;
+		break;
+	case SDLK_a:
+		isMoveLeft = false;
+		break;
+	case SDLK_d:
+		isMoveRight = false;
+		break;
+	}
 }
 
 void GameInputComponent::mouseMove(SDL_MouseMotionEvent motion)
@@ -52,24 +94,28 @@ void GameInputComponent::mouseDown(SDL_MouseButtonEvent button)
 	{
 		playerCon->FirePrimWeapon();
 
-		string TempName = "missile" + to_string(missileCount);
-		owner->addChild(new GameObject(TempName, owner, missileObject, missileTexture, missileShader));	//creating object
-		owner->getChild(TempName)->addComponent(new Renderer(owner->getChild(TempName)));	//adding render comp
+		GameObject* thisFireball;
+		string TempName = "fireball" + to_string(fireballCount);
 
-		missileCount++;
+		thisFireball = new GameObject( TempName, owner, fireballObject, fireballTexture, fireballShader);	//creating object
+		owner->addChild(thisFireball);
+		fireballCount++;
+
 		btVector3 FirePosition = btVector3(owner->getWorldPos().x, owner->getWorldPos().y, owner->getWorldPos().z);
-		//cout << "position " << owner->getWorldPos().x << " " << owner->getWorldPos().y << " " << owner->getWorldPos().z << endl;
-		btRigidBody* missile1 = bulPhys->CreatePhysBox(FirePosition, 1, missileShapeID);
+		cout << "position " << owner->getWorldPos().x << " " << owner->getWorldPos().y << " " << owner->getWorldPos().z << endl;
+		btRigidBody* missile1 = bulPhys->CreatePhysBox(FirePosition, 1, fireballShapeID);
 		//TODO set the firce direction forward
 
-		btVector3 fireForce = btVector3(playerCon->getlookAtPoint().x * 1000, playerCon->getlookAtPoint().y * 1000, playerCon->getlookAtPoint().z * 1000);
+		btVector3 fireForce = btVector3(playerCon->getlookAtPoint().x * 10000, playerCon->getlookAtPoint().y * 10000, playerCon->getlookAtPoint().z * 10000);
 		missile1->applyForce(fireForce, FirePosition);
 		
-		owner->getChild(TempName)->addComponent(new physicsComponent(owner->getChild(TempName), missile1)); //adding physics comp
-		owner->getChild(TempName)->setPosition(vec3(0,0,0));	//changing postiion
-		owner->getChild(TempName)->setRotation(vec3(0, 0, 0));	//change rotaion
-		owner->getChild(TempName)->setScale(vec3(1, 1, 1));	//change scele
-		owner->getChild(TempName)->setForceRender(true);
+		thisFireball->addComponent(new Renderer(owner->getChild(TempName)));
+		thisFireball->addComponent(new FireballComponent(owner->getChild(TempName)));
+		thisFireball->addComponent(new physicsComponent(owner->getChild(TempName), missile1)); //adding physics comp
+		thisFireball->setPosition(vec3(0, 0, 0));	//changing postiion
+		thisFireball->setRotation(vec3(0, 0, 0));	//change rotaion
+		thisFireball->setScale(vec3(0.2, 0.2, 0.2));	//change scale
+		thisFireball->setForceRender(true);
 	}
 }
 

@@ -146,6 +146,41 @@ void BulletPhys::updatePhysics()
 		}
 		//printf("world pos object %d = %f,%f,%f\n", j, float(trans.getOrigin().getX()), float(trans.getOrigin().getY()), float(trans.getOrigin().getZ()));
 	}
+
+	int numManifolds = dynamicsWorld->getDispatcher()->getNumManifolds();
+	for (int i = 0; i < numManifolds; i++)
+	{
+		btPersistentManifold* contactManifold = dynamicsWorld->getDispatcher()->getManifoldByIndexInternal(i);
+		const btCollisionObject* obA = contactManifold->getBody0();
+		const btCollisionObject* obB = contactManifold->getBody1();
+
+		GameObject* objectA = (GameObject*)obA->getUserPointer();
+		GameObject* objectB = (GameObject*)obB->getUserPointer();
+
+		int numContacts = contactManifold->getNumContacts();
+		if (objectA && objectB)
+		{
+			FireballComponent* tempFireballComponent = (FireballComponent*)objectA->getComponents("fireball component");
+			if (tempFireballComponent)
+			{
+				tempFireballComponent->collision(objectB);
+			}
+			else
+			{
+				objectA->getCompMap()->erase("fireball component");
+				tempFireballComponent = (FireballComponent*)objectB->getComponents("fireball component");
+				if(tempFireballComponent)
+				{
+					tempFireballComponent->collision(objectA);
+				}
+				else
+				{
+					objectB->getCompMap()->erase("fireball component");
+				}
+			}
+		}
+
+	}
 }
 
 btRigidBody* BulletPhys::getRidgidBody(int ID)
@@ -160,3 +195,4 @@ btVector3 BulletPhys::getPosition(btRigidBody* body)
 	body->getMotionState()->getWorldTransform(trans);
 	return trans.getOrigin();
 }
+	

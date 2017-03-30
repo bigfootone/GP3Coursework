@@ -1,6 +1,8 @@
 #pragma once
 
 #include <btBulletDynamicsCommon.h>
+#include "GameObject.h"
+#include "FireballComponent.h"
 
 class BulletPhys
 {

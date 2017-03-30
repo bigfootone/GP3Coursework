@@ -113,8 +113,8 @@ void SpaceScene::createScene()
 
 	//bullet physics
 	bulPhys = new BulletPhys();
-	bulPhys->CreateGroundPlane();
-	TestSphereID = bulPhys->CreateSphereShape(5.0);
+	//bulPhys->CreateGroundPlane();
+	groundBoxID = bulPhys->CreateBoxShape(btVector3(1000, 1000, 1));
 	missileBoxID = bulPhys->CreateBoxShape(btVector3(5, 3, 3));
 
 	//create cubemap texture
@@ -128,15 +128,24 @@ void SpaceScene::createScene()
 	skyMaterial->loadSkyBoxTextures(skyBoxFront, skyBoxBack, skyBoxLeft, skyBoxRight, skyBoxTop, skyBoxBottom);
 
 	//create objects
-	objects.insert(pair<string, Object*>("teapot", new Object("teapot")));
-	objects["teapot"]->createBuffer("/heroWalker.FBX");
+	objects.insert(pair<string, Object*>("ground", new Object("ground")));
+	objects["ground"]->createBuffer("/SpaceFloor.FBX");
+
+	objects.insert(pair<string, Object*>("fireball", new Object("fireball")));
+	objects["fireball"]->createBuffer("/Fireball.FBX");
+
+	objects.insert(pair<string, Object*>("house1", new Object("house1")));
+	objects["house1"]->createBuffer("/house1.FBX");
 
 	//objects.insert(pair<string, Object*>("cubeMesh", new Cube("cubeMesh")));
 	//objects["cubeMesh"]->createBuffer();
 
 	//create textures
 	textures.insert(pair<string, Texture*>("sun", new Texture("sun")));
-	textures["sun"]->createTexture("/SunTexture.png");
+	textures["sun"]->createTexture("/wallTexture.png");
+
+	textures.insert(pair<string, Texture*>("house1", new Texture("house1")));
+	textures["house1"]->createTexture("/TexturesCom_WindowsIndustrial0499_1_M.jpg");
 
 	//create shaders
 	Shader * currentShader = new Shader("main");
@@ -167,25 +176,35 @@ void SpaceScene::createScene()
 	//uncomment for world reset
 	GameObject *tempObj;
 
-	//player
-	worldObject->addChild(new GameObject("player", worldObject, input));
-	GameInputComponent *inputComp = new GameInputComponent(worldObject->getChild("player"));
-	inputComp->assignMissile(objects["teapot"], shaders["main"], textures["sun"], missileBoxID, bulPhys);
-	worldObject->getChild("player")->addComponent(inputComp);
-
 	//teapot room node done
 	worldObject->addChild(new GameObject("SpaceNode", worldObject));	//creating node
 	tempObj = worldObject->getChild("SpaceNode"); //setting temp object for easy access
 	tempObj->setPosition(vec3(0, 0, 0));
 	tempObj->setActive(true);
 
-	tempObj->addChild(new GameObject("sun", tempObj, objects["teapot"], textures["sun"], shaders["main"]));	//creating object
-	tempObj->getChild("sun")->addComponent(new Renderer(tempObj->getChild("sun")));	//adding render comp
-	tempObj->getChild("sun")->addComponent(new physicsComponent(tempObj->getChild("sun"), bulPhys->CreatePhysBox(btVector3(0, 100, 0), 1, TestSphereID))); //adding physics comp
-	tempObj->getChild("sun")->setPosition(vec3(0, 100, 0));	//changing postiion
-	tempObj->getChild("sun")->setRotation(vec3(0, 0, 0));	//change rotaion
-	tempObj->getChild("sun")->setScale(vec3(1, 1, 1));	//change scele
-	tempObj->getChild("sun")->setForceRender(true);
+	/*player
+	tempObj->addChild(new GameObject("player", tempObj, input));
+	GameInputComponent *inputComp = new GameInputComponent(tempObj->getChild("player"));
+	inputComp->assignMissile(objects["fireball"], shaders["main"], textures["sun"], missileBoxID, bulPhys);
+	tempObj->getChild("player")->addComponent(inputComp);*/
+
+	
+	playerObject = new GameObject("player", tempObj, input);
+	tempObj->addChild(playerObject);
+	GameInputComponent *inputComp = new GameInputComponent(tempObj->getChild("player"));
+	inputComp->assignMissile(objects["fireball"], shaders["main"], textures["sun"], missileBoxID, bulPhys);
+	playerObject->addComponent(inputComp);
+	playerObject->setPosition(vec3(0, 0, 0));
+	playerObject->setScale(vec3(1, 1, 1));
+
+	
+	tempObj->addChild(new GameObject("ground", tempObj, objects["ground"], textures["sun"], shaders["main"]));	//creating object
+	tempObj->getChild("ground")->addComponent(new Renderer(tempObj->getChild("ground")));	//adding render comp
+	//tempObj->getChild("ground")->addComponent(new physicsComponent(tempObj->getChild("ground"), bulPhys->CreatePhysBox(btVector3(0, -105, -75), 500000000, groundBoxID))); //adding physics comp
+	tempObj->getChild("ground")->setPosition(vec3(0, -105, 75));	//changing postiion
+	tempObj->getChild("ground")->setRotation(vec3(-180, 0, 0));	//change rotaion
+	tempObj->getChild("ground")->setScale(vec3(5, 5, 5));	//change scale
+	tempObj->getChild("ground")->setForceRender(true);
 
 																//set skybox
 	//worldObject->addChild(new GameObject("skybox", worldObject, objects["cubeMesh"], skyMaterial, shaders["main"]));
@@ -246,7 +265,8 @@ void SpaceScene::destroyScene()
 {
 	shaders["main"]->cleanUp();
 	shaders["sky"]->cleanUp();
-	objects["teapot"]->cleanUp();
+	objects["ground"]->cleanUp();
+	objects["house1"]->cleanUp();
 	//objects["cubeMesh"]->cleanUp();
 }
 
@@ -343,8 +363,10 @@ void SpaceScene::onKeyDown(SDL_Keycode key)
 		break;
 	case SDLK_ESCAPE:
 		GameRunning = false;
+		break;
 	case SDLK_e:
 		bulPhys->getRidgidBody(1)->applyForce(btVector3(0, 1000, 0), btVector3(0, 0, 0));
+		break;
 	default:
 		break;
 	}

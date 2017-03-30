@@ -130,8 +130,10 @@ private:
 	BulletPhys *bulPhys;
 
 	//physic shape ID
-	int TestSphereID;
+	int groundBoxID;
 	int missileBoxID;
+
+	GameObject* playerObject;
 };
 
 #endif
