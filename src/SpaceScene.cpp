@@ -2,6 +2,7 @@
 #include "SpaceScene.h"
 #include "Editor.h"
 #include "OpenGL.h"
+#include "AL\alut.h"
 
 SpaceScene::SpaceScene()
 {

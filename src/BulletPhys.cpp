@@ -6,16 +6,16 @@ BulletPhys::BulletPhys()
 {
 	//set up code taken from bullet example page
 
-	///collision configuration contains default setup for memory, collision setup.
+	//collision configuration contains default setup for memory, collision setup.
 	collisionConfiguration = new btDefaultCollisionConfiguration();
 
-	///use the default collision dispatcher.
+	//use the default collision dispatcher.
 	dispatcher = new	btCollisionDispatcher(collisionConfiguration);
 
-	///btDbvtBroadphase is a good general purpose broadphase. You can also try out btAxis3Sweep.
+	//btDbvtBroadphase is a good general purpose broadphase. You can also try out btAxis3Sweep.
 	overlappingPairCache = new btDbvtBroadphase();
 
-	///the default constraint solver.
+	//the default constraint solver.
 	solver = new btSequentialImpulseConstraintSolver;
 
 	dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
@@ -144,7 +144,6 @@ void BulletPhys::updatePhysics()
 		{
 			trans = obj->getWorldTransform();
 		}
-		//printf("world pos object %d = %f,%f,%f\n", j, float(trans.getOrigin().getX()), float(trans.getOrigin().getY()), float(trans.getOrigin().getZ()));
 	}
 
 	int numManifolds = dynamicsWorld->getDispatcher()->getNumManifolds();
