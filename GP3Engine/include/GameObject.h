@@ -59,6 +59,7 @@ public:
 	MeshData getMesh(){ return mesh; };
 	bool getForceRender(){ return forceRender; }
 	Component* getComponents(string tempComp);
+	bool getDestroy() { return Destroy; }
 
 	//setters
 	void setScale(vec3 tempScale){ size = tempScale; };
@@ -74,6 +75,7 @@ public:
 	void setInput(PlayerController *tempPlayer){ input = tempPlayer; };
 	void setScene(Scene *tempScene){ curScene = tempScene; };
 	void setForceRender(bool tempBool){ forceRender = tempBool; }
+	void setDestroy(bool tempBool) { Destroy = tempBool; }
 
 
 private:
@@ -91,6 +93,7 @@ private:
 	mat4 modelMatrix;
 	MeshData mesh;
 	bool forceRender = false;
+	bool Destroy;
 
 	//the distance from the parent world position
 	vec3 localPos = vec3(0.0f, 0.0f, 0.0f);

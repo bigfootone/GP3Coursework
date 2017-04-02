@@ -6,6 +6,7 @@
 #include "physicsComponent.h"
 #include "GameInputComponent.h"
 #include "GamePlayerController.h"
+#include "Audio.h"
 
 
 struct Light {
@@ -134,6 +135,8 @@ private:
 	int missileBoxID;
 
 	GameObject* playerObject;
+	Audio* backgroundAudio;
+	bool musicState;
 };
 
 #endif

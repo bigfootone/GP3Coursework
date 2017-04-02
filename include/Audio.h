@@ -19,4 +19,6 @@ private:
 	ALuint AudioBuffer;
 	ALuint AudioSource;
 	string path;
+
+	ALenum error;
 };

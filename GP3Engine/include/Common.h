@@ -35,6 +35,7 @@ const string TEXTURE_PATH = "/textures";
 const string FONT_PATH = "/fonts";
 const string MODEL_PATH = "/models";
 const string SCENE_PATH = "/scenes";
+const string AUDIO_PATH = "/audio";
 
 void checkError(const char *file, int line);
 

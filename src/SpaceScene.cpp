@@ -8,6 +8,7 @@ SpaceScene::SpaceScene()
 {
 	debugMode = false;
 	worldObject = new GameObject("world Object");
+	musicState = true;
 }
 
 SpaceScene::SpaceScene(string tempName)
@@ -15,6 +16,7 @@ SpaceScene::SpaceScene(string tempName)
 	debugMode = false;
 	name = tempName;
 	worldObject = new GameObject("world Object");
+	musicState = true;
 }
 
 SpaceScene::~SpaceScene()
@@ -115,7 +117,7 @@ void SpaceScene::createScene()
 	//bullet physics
 	bulPhys = new BulletPhys();
 	//bulPhys->CreateGroundPlane();
-	groundBoxID = bulPhys->CreateBoxShape(btVector3(1000, 1000, 1));
+	groundBoxID = bulPhys->CreateBoxShape(btVector3(2, 3, 2));
 	missileBoxID = bulPhys->CreateBoxShape(btVector3(5, 3, 3));
 
 	//create cubemap texture
@@ -135,18 +137,27 @@ void SpaceScene::createScene()
 	objects.insert(pair<string, Object*>("fireball", new Object("fireball")));
 	objects["fireball"]->createBuffer("/Fireball.FBX");
 
-	objects.insert(pair<string, Object*>("house1", new Object("house1")));
-	objects["house1"]->createBuffer("/house1.FBX");
+	objects.insert(pair<string, Object*>("iceball", new Object("iceball")));
+	objects["iceball"]->createBuffer("/iceball2.FBX");
+
+	objects.insert(pair<string, Object*>("target", new Object("target")));
+	objects["target"]->createBuffer("/training-doll.FBX");
 
 	//objects.insert(pair<string, Object*>("cubeMesh", new Cube("cubeMesh")));
 	//objects["cubeMesh"]->createBuffer();
 
 	//create textures
-	textures.insert(pair<string, Texture*>("sun", new Texture("sun")));
-	textures["sun"]->createTexture("/wallTexture.png");
+	textures.insert(pair<string, Texture*>("ground", new Texture("ground")));
+	textures["ground"]->createTexture("/wallTexture.png");
 
-	textures.insert(pair<string, Texture*>("house1", new Texture("house1")));
-	textures["house1"]->createTexture("/TexturesCom_WindowsIndustrial0499_1_M.jpg");
+	textures.insert(pair<string, Texture*>("targetFire", new Texture("targetFire")));
+	textures["targetFire"]->createTexture("/NeptuneTexture.png");
+
+	textures.insert(pair<string, Texture*>("targetIce", new Texture("targetIce")));
+	textures["targetIce"]->createTexture("/VenusTexture.png");
+
+	textures.insert(pair<string, Texture*>("fireball", new Texture("fireball")));
+	textures["fireball"]->createTexture("/SunTexture.png");
 
 	//create shaders
 	Shader * currentShader = new Shader("main");
@@ -193,13 +204,14 @@ void SpaceScene::createScene()
 	playerObject = new GameObject("player", tempObj, input);
 	tempObj->addChild(playerObject);
 	GameInputComponent *inputComp = new GameInputComponent(tempObj->getChild("player"));
-	inputComp->assignMissile(objects["fireball"], shaders["main"], textures["sun"], missileBoxID, bulPhys);
+	inputComp->assignFireball(objects["fireball"], shaders["main"], textures["fireball"], missileBoxID, bulPhys);
+	inputComp->assignIceball(objects["iceball"], shaders["main"], textures["targetFire"], missileBoxID, bulPhys);
 	playerObject->addComponent(inputComp);
 	playerObject->setPosition(vec3(0, 0, 0));
 	playerObject->setScale(vec3(1, 1, 1));
 
 	
-	tempObj->addChild(new GameObject("ground", tempObj, objects["ground"], textures["sun"], shaders["main"]));	//creating object
+	tempObj->addChild(new GameObject("ground", tempObj, objects["ground"], textures["ground"], shaders["main"]));	//creating object
 	tempObj->getChild("ground")->addComponent(new Renderer(tempObj->getChild("ground")));	//adding render comp
 	//tempObj->getChild("ground")->addComponent(new physicsComponent(tempObj->getChild("ground"), bulPhys->CreatePhysBox(btVector3(0, -105, -75), 500000000, groundBoxID))); //adding physics comp
 	tempObj->getChild("ground")->setPosition(vec3(0, -105, 75));	//changing postiion
@@ -207,11 +219,25 @@ void SpaceScene::createScene()
 	tempObj->getChild("ground")->setScale(vec3(5, 5, 5));	//change scale
 	tempObj->getChild("ground")->setForceRender(true);
 
+	tempObj->addChild(new GameObject("targetFire", tempObj, objects["target"], textures["targetFire"], shaders["main"]));	//creating object
+	tempObj->getChild("targetFire")->addComponent(new Renderer(tempObj->getChild("targetFire")));	//adding render comp
+	tempObj->getChild("targetFire")->addComponent(new physicsComponent(tempObj->getChild("targetFire"), bulPhys->CreatePhysBox(btVector3(0, 0, 20), 500000000, groundBoxID))); //adding physics comp
+	//tempObj->getChild("targetFire")->setPosition(vec3(0, 0, 20));	//changing postiion
+	tempObj->getChild("targetFire")->setRotation(vec3(-90, 0, 0));	//change rotaion
+	tempObj->getChild("targetFire")->setScale(vec3(1, 1, 1));	//change scale
+	tempObj->getChild("targetFire")->setForceRender(true);
+
 																//set skybox
 	//worldObject->addChild(new GameObject("skybox", worldObject, objects["cubeMesh"], skyMaterial, shaders["main"]));
 	//worldObject->getChild("skybox")->addComponent(RENDER_COMPONENT);
 	//worldObject->getChild("skybox")->setForceRender(true);
 	//worldObject->getChild("skybox")->setScale(vec3(20, 20, 20));	//change scele
+
+	//music
+	backgroundAudio = new Audio();
+	backgroundAudio->createBuffer("/bgMusic.wav");
+	//backgroundAudio->playAudio();
+
 
 	cout << "world: " << worldObject->getName() << " components: ";
 	worldObject->printComponents();
@@ -241,12 +267,8 @@ void SpaceScene::createScene()
 	gLightAttenuationLoc = glGetUniformLocation(shaderID, "light.attenuation");
 	gLightAmbientCoeLoc = glGetUniformLocation(shaderID, "light.ambientCoefficient");
 	cameraPosLoc = glGetUniformLocation(shaderID, "cameraPosition");
-	//viewLocation = glGetUniformLocation(shaderID, "V");
 	modelLocation = glGetUniformLocation(shaderID, "M");
-	//depthBiasLocation = glGetUniformLocation(shaderID, "DepthBiasMVP");
-	//shadowMapLocation = glGetUniformLocation(shaderID, "shadowMap");
-	//lightLocation = glGetUniformLocation(shaderID, "LightInvDirection");
-	//lightId = glGetUniformLocation(shaderID, "LightPosition_worldspace");
+
 
 	CHECK_GL_ERROR();
 }
@@ -267,7 +289,6 @@ void SpaceScene::destroyScene()
 	shaders["main"]->cleanUp();
 	shaders["sky"]->cleanUp();
 	objects["ground"]->cleanUp();
-	objects["house1"]->cleanUp();
 	//objects["cubeMesh"]->cleanUp();
 }
 
@@ -350,23 +371,19 @@ void SpaceScene::onKeyDown(SDL_Keycode key)
 	switch (key)
 	{
 	case SDLK_p:
-		if (debugMode)
+		if (musicState == true)
 		{
-			cout << "debug mode off" << endl;
-			debugMode = false;
+			backgroundAudio->stopAudio();
+			musicState = false;
 		}
 		else
 		{
-			cout << "debug mode on" << endl;
-			debugMode = true;
+			backgroundAudio->playAudio();
+			musicState = true;
 		}
-		input->setDebug(debugMode);
 		break;
 	case SDLK_ESCAPE:
 		GameRunning = false;
-		break;
-	case SDLK_e:
-		bulPhys->getRidgidBody(1)->applyForce(btVector3(0, 1000, 0), btVector3(0, 0, 0));
 		break;
 	default:
 		break;
