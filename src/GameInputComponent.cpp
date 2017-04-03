@@ -116,11 +116,16 @@ void GameInputComponent::mouseDown(SDL_MouseButtonEvent button)
 			cout << "position " << owner->getWorldPos().x << " " << owner->getWorldPos().y << " " << owner->getWorldPos().z << endl;
 			btRigidBody* missile1 = bulPhys->CreatePhysBox(FirePosition, 1, fireballShapeID);
 
-			btVector3 fireForce = btVector3(playerCon->getlookAtPoint().x * 10000, playerCon->getlookAtPoint().y * 10000, playerCon->getlookAtPoint().z * 10000);
+			btVector3 fireForce = btVector3(playerCon->getlookAtPoint().x * 500, playerCon->getlookAtPoint().y * 500, playerCon->getlookAtPoint().z * 500);
 			missile1->applyForce(fireForce, FirePosition);
 
 			thisFireball->addComponent(new Renderer(owner->getChild(TempName)));
-			thisFireball->addComponent(new FireballComponent(owner->getChild(TempName)));
+			FireballComponent* fireball = new FireballComponent(owner->getChild(TempName));
+			Material spellMaterial(lightColour4(0.0f, 0.0f, 0.0f, 1.0f), lightColour4(1.0f, 1.0f, 1.0f, 1.0f), lightColour4(1.0f, 1.0f, 1.0f, 1.0f), lightColour4(0, 0, 0, 1.0f), 5.0f);
+			fireball->setMaterial(spellMaterial);
+			Lighting light(lightColour4(0, 0, 0, 1), lightColour4(1, 1, 1, 1), lightColour4(1, 1, 1, 1), glm::vec4(0, 0, 20, 1), glm::vec3(0.0, 0.0, 1.0), 0.0f, 10.0f, 1.0f, 0.0f, 0.0f);
+			fireball->setLighting(light);
+			thisFireball->addComponent(fireball);
 			thisFireball->addComponent(new physicsComponent(owner->getChild(TempName), missile1)); //adding physics comp
 			thisFireball->setPosition(vec3(0, 0, 0));	//changing postiion
 			thisFireball->setRotation(vec3(0, 0, 0));	//change rotaion
@@ -152,7 +157,7 @@ void GameInputComponent::mouseDown(SDL_MouseButtonEvent button)
 			missile1->applyForce(fireForce, FirePosition);
 
 			thisIceball->addComponent(new Renderer(owner->getChild(TempName)));
-			thisIceball->addComponent(new FireballComponent(owner->getChild(TempName)));
+			thisIceball->addComponent(new IceballComponent(owner->getChild(TempName)));
 			thisIceball->addComponent(new physicsComponent(owner->getChild(TempName), missile1)); //adding physics comp
 			thisIceball->setPosition(vec3(0, 0, 0));	//changing postiion
 			thisIceball->setRotation(vec3(0, 0, 0));	//change rotaion

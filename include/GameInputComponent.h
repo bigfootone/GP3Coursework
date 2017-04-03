@@ -4,6 +4,7 @@
 #include "physicsComponent.h"
 #include "BulletPhys.h"
 #include "FireballComponent.h"
+#include "IceballComponent.h"
 #include "Audio.h"
 
 class GameInputComponent :public InputComponent

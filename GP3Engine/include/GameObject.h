@@ -11,6 +11,7 @@
 #include "ViewFrustumCulling.h"
 #include "Scene.h"
 #include "Mesh.h"
+#include <list>
 
 class GameObject
 {
@@ -49,6 +50,7 @@ public:
 	Texture *getTexture(){ return texture; };
 	GameObject *getChild(string tempName) { return childrenList[tempName]; };
 	string getName(){ return name; };
+	GameObject* getParent() { return parent; };
 	map<string, GameObject*> *getChildrenMap(){ return &childrenList; };
 	map<string, Component*> *getCompMap(){ return &componentsList; };
 	bool getActive(){ return active; };
@@ -76,6 +78,7 @@ public:
 	void setScene(Scene *tempScene){ curScene = tempScene; };
 	void setForceRender(bool tempBool){ forceRender = tempBool; }
 	void setDestroy(bool tempBool) { Destroy = tempBool; }
+	void setMaterial(){}
 
 
 private:

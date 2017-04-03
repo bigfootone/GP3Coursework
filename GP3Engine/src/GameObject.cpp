@@ -19,6 +19,7 @@ GameObject::GameObject(string tempName)
 	childrenList.clear();
 	componentsList.clear();
 	active = true;
+	Destroy = false;
 }
 
 GameObject::GameObject(string tempName, GameObject *tempParent, Object *tempModel, Texture *tempTexture, Shader *tempShader)
@@ -33,6 +34,7 @@ GameObject::GameObject(string tempName, GameObject *tempParent, Object *tempMode
 	childrenList.clear();
 	componentsList.clear();
 	active = true;
+	Destroy = false;
 }
 
 GameObject::GameObject(string tempName, GameObject *tempParent, PlayerController *tempInput)
@@ -47,6 +49,7 @@ GameObject::GameObject(string tempName, GameObject *tempParent, PlayerController
 	childrenList.clear();
 	componentsList.clear();
 	active = true;
+	Destroy = false;
 }
 
 GameObject::GameObject(string tempName, GameObject *tempParent)
@@ -61,6 +64,7 @@ GameObject::GameObject(string tempName, GameObject *tempParent)
 	childrenList.clear();
 	componentsList.clear();
 	active = true;
+	Destroy = false;
 }
 
 GameObject::~GameObject()
@@ -76,6 +80,8 @@ void GameObject::update(mat4 VPMat)
 	modelMatrix = scale(modelMatrix, size);
 	MVP = VPMat * modelMatrix;
 
+	list<string> toDestroy;
+
 	if (active)
 	{
 		for (auto i = componentsList.begin(); i != componentsList.end(); i++)
@@ -84,8 +90,21 @@ void GameObject::update(mat4 VPMat)
 		}
 		for (auto i = childrenList.begin(); i != childrenList.end(); i++)
 		{
-			i->second->update(VPMat);
+			if (i->second->getDestroy())
+			{
+				toDestroy.push_back(i->second->getName());
+			}
+			else
+			{
+				i->second->update(VPMat);
+			}
 		}
+	}
+
+	for each(string var in toDestroy)
+	{
+		delete childrenList[var];
+		childrenList.erase(var);
 	}
 }
 
@@ -177,5 +196,9 @@ vec3 GameObject::getWorldPos()
 
 Component * GameObject::getComponents(string tempComp)
 {
-	return componentsList[tempComp];
+	auto iter = componentsList.find(tempComp);
+	if (iter == componentsList.end())
+		return nullptr;
+	else
+		return iter->second;
 }

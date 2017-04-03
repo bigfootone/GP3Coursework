@@ -141,7 +141,7 @@ void SpaceScene::createScene()
 	objects["iceball"]->createBuffer("/iceball2.FBX");
 
 	objects.insert(pair<string, Object*>("target", new Object("target")));
-	objects["target"]->createBuffer("/training-doll.FBX");
+	objects["target"]->createBuffer("/utah-teapot.FBX");
 
 	//objects.insert(pair<string, Object*>("cubeMesh", new Cube("cubeMesh")));
 	//objects["cubeMesh"]->createBuffer();
@@ -211,13 +211,14 @@ void SpaceScene::createScene()
 	playerObject->setScale(vec3(1, 1, 1));
 
 	
-	tempObj->addChild(new GameObject("ground", tempObj, objects["ground"], textures["ground"], shaders["main"]));	//creating object
-	tempObj->getChild("ground")->addComponent(new Renderer(tempObj->getChild("ground")));	//adding render comp
-	//tempObj->getChild("ground")->addComponent(new physicsComponent(tempObj->getChild("ground"), bulPhys->CreatePhysBox(btVector3(0, -105, -75), 500000000, groundBoxID))); //adding physics comp
-	tempObj->getChild("ground")->setPosition(vec3(0, -105, 75));	//changing postiion
-	tempObj->getChild("ground")->setRotation(vec3(-180, 0, 0));	//change rotaion
-	tempObj->getChild("ground")->setScale(vec3(5, 5, 5));	//change scale
-	tempObj->getChild("ground")->setForceRender(true);
+	GameObject *go = new GameObject("ground", tempObj, objects["ground"], textures["ground"], shaders["main"]);
+	go->addComponent(new Renderer(go));	//adding render comp
+	go->setPosition(vec3(0, -105, 75));	//changing postiion
+	go->setRotation(vec3(-180, 0, 0));	//change rotaion
+	go->setScale(vec3(5, 5, 5));	//change scale
+	go->setForceRender(true);
+	tempObj->addChild(go);	//creating object
+	
 
 	tempObj->addChild(new GameObject("targetFire", tempObj, objects["target"], textures["targetFire"], shaders["main"]));	//creating object
 	tempObj->getChild("targetFire")->addComponent(new Renderer(tempObj->getChild("targetFire")));	//adding render comp
@@ -249,13 +250,6 @@ void SpaceScene::createScene()
 		//Process/log the error.
 		cout << "error in creating scene " << err << endl;
 	}
-
-	materialShininess = 100;
-	gLight.position = glm::vec3(0, 130, 0);
-	gLight.intensities = glm::vec3(1.0f, 1.0f, 1.0f); //white
-	gLight.attenuation = 1.0f;
-	gLight.ambientCoefficient = 0.305f;
-
 	GLuint shaderID = shaders["main"]->getShader();
 
 	textureSamplerLocation = glGetUniformLocation(shaderID, "texture0");

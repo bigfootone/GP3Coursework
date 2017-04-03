@@ -47,7 +47,7 @@ bool checkForCompilerErrors(GLuint shaderProgram)
 	glGetShaderiv(shaderProgram, GL_COMPILE_STATUS, &ifCompiled);
 	if (ifCompiled == GL_FALSE)
 	{
-		GLint maxLength = 0;
+		GLint maxLength;
 		glGetShaderiv(shaderProgram, GL_INFO_LOG_LENGTH, &maxLength);
 
 		//the maxLength included the null character

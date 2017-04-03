@@ -7,6 +7,8 @@
 #include "GameInputComponent.h"
 #include "GamePlayerController.h"
 #include "Audio.h"
+#include "Lighting.h"
+#include "Material.h"
 
 
 struct Light {

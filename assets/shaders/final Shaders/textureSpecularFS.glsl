@@ -43,7 +43,7 @@ void main()
 	float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
 	vec3 specular = light.specular * (spec * material.specular); 
         
-	//color = vec4(ambient + diffuse + specular, 1.0f);  
+	//color = vec4(ambient + diffuse + -specular, 1.0f);  
 	color = texture(material.diffuse, TexCoords);
 	//color = vec4(TexCoords, 0, 1);
 	//color = vec4(Normal, 1);

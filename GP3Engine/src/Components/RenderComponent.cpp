@@ -1,5 +1,6 @@
 #include "Components\RenderComponent.h"
 #include "GameObject.h"
+#include "FireballComponent.h"
 
 Renderer::Renderer()
 {
@@ -56,12 +57,43 @@ void Renderer::render()
 		CHECK_GL_ERROR();
 		//get the uniform for the texture coords
 
+		Lighting *lPtr = FireballComponent::getActiveLight();
+		if (lPtr)
+		{
+			Lighting l = *lPtr;
+
+			GLint uniformLoc = glGetUniformLocation(owner->getShader()->getShader(), "light.diffuse");//inside material strut of texture spec FS
+			glUniform3f(uniformLoc, l.m_lightDiffuse.r, l.m_lightDiffuse.g, l.m_lightDiffuse.b);
+
+			uniformLoc = glGetUniformLocation(owner->getShader()->getShader(), "light.ambient");//inside material strut of texture spec FS
+			glUniform3f(uniformLoc, l.m_lightAmbient.r, l.m_lightAmbient.g, l.m_lightAmbient.b);
+
+			uniformLoc = glGetUniformLocation(owner->getShader()->getShader(), "light.specular");//inside material strut of texture spec FS
+			glUniform3f(uniformLoc, l.m_lightSpecular.r, l.m_lightSpecular.g, l.m_lightSpecular.b);
+
+			uniformLoc = glGetUniformLocation(owner->getShader()->getShader(), "light.position");//inside material strut of texture spec FS
+			vec4 pos = l.m_lightPosition;
+			glUniform3f(uniformLoc, pos.x, pos.y, pos.z);
+		}
+
 		GLint texture0Location = glGetUniformLocation(owner->getShader()->getShader(), "material.diffuse");//inside material strut of texture spec FS
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, owner->getTexture()->getTexture());
 		glUniform1i(texture0Location, 0);
-		CHECK_GL_ERROR();
 
+		FireballComponent* fireball = (FireballComponent*)owner->getComponents("fireball component");
+		if (fireball)
+		{
+			Material m = fireball->getMaterial();
+
+			GLint uniformLoc = glGetUniformLocation(owner->getShader()->getShader(), "material.specular");//inside material strut of texture spec FS
+			glUniform3f(uniformLoc, m.m_Specular.r, m.m_Specular.g, m.m_Specular.b);
+
+			uniformLoc = glGetUniformLocation(owner->getShader()->getShader(), "material.shininess");//inside material strut of texture spec FS
+			glUniform1f(uniformLoc, m.m_Shininess);
+		}
+
+		CHECK_GL_ERROR();
 	}
 	else
 	{
