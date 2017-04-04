@@ -231,7 +231,7 @@ void GameInputComponent::shootFireball()
 	cout << "position " << owner->getWorldPos().x << " " << owner->getWorldPos().y << " " << owner->getWorldPos().z << endl;
 	btRigidBody* missile1 = bulPhys->CreatePhysBox(FirePosition, 1, fireballShapeID);
 
-	btVector3 fireForce = btVector3(playerCon->getlookAtPoint().x * 500, playerCon->getlookAtPoint().y * 500, playerCon->getlookAtPoint().z * 500);
+	btVector3 fireForce = btVector3(playerCon->getlookAtPoint().x * 10000, playerCon->getlookAtPoint().y * 10000, playerCon->getlookAtPoint().z * 10000);
 	missile1->applyForce(fireForce, FirePosition);
 
 	thisFireball->addComponent(new Renderer(owner->getChild(TempName)));

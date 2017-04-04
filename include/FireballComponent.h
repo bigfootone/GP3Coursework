@@ -28,4 +28,7 @@ private:
 	Lighting light;
 
 	static Lighting *activeLight;
+
+	float lifespan;
+	float lastTime;
 };

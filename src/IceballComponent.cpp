@@ -4,6 +4,7 @@ IceballComponent::IceballComponent(GameObject *tempOwner)
 {
 	type = "Iceball Component";
 	owner = tempOwner;
+
 }
 
 IceballComponent::~IceballComponent()
