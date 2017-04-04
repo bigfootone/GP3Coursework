@@ -12,6 +12,8 @@ public:
 	virtual void mouseMove(SDL_MouseMotionEvent motion) = 0;
 	virtual void mouseDown(SDL_MouseButtonEvent button) = 0;
 	virtual void mouseUp(SDL_MouseButtonEvent button) = 0;
+	virtual void controllerStickInput(SDL_ControllerAxisEvent motion) = 0;
+	virtual void controllerButtonDown(SDL_ControllerButtonEvent button) = 0;
 
 
 private:

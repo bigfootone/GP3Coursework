@@ -19,12 +19,12 @@ void IceballComponent::update(mat4 MVPMat)
 bool IceballComponent::collision(GameObject* target)
 {
 
-	if (target->getName() == "targetIce")
+	if (target->getName() == "targetFire")
 	{
 		cout << target->getName() << endl;
+		owner->setDestroy(true);
+		target->setDestroy(true);
 	}
-	//owner->setDestroy(true);
-	//target->setDestroy(true);
 
 	return true;
 

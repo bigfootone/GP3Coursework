@@ -160,21 +160,26 @@ void BulletPhys::updatePhysics()
 		if (objectA && objectB)
 		{
 			FireballComponent* tempFireballComponent = (FireballComponent*)objectA->getComponents("fireball component");
+			IceballComponent* tempIceballComponent = (IceballComponent*)objectA->getComponents("Iceball Component");
 			if (tempFireballComponent)
 			{
 				tempFireballComponent->collision(objectB);
 			}
+			else if (tempIceballComponent)
+			{
+				tempIceballComponent->collision(objectB);
+			}
 			else
 			{
-				objectA->getCompMap()->erase("fireball component");
 				tempFireballComponent = (FireballComponent*)objectB->getComponents("fireball component");
+				tempIceballComponent = (IceballComponent*)objectB->getComponents("Iceball Component");
 				if(tempFireballComponent)
 				{
 					tempFireballComponent->collision(objectA);
 				}
-				else
+				else if (tempIceballComponent)
 				{
-					objectB->getCompMap()->erase("fireball component");
+					tempIceballComponent->collision(objectA);
 				}
 			}
 		}
@@ -193,5 +198,10 @@ btVector3 BulletPhys::getPosition(btRigidBody* body)
 	btTransform trans;
 	body->getMotionState()->getWorldTransform(trans);
 	return trans.getOrigin();
+}
+
+void BulletPhys::removePhysics(btRigidBody* tempbody)
+{
+	dynamicsWorld->removeRigidBody(tempbody);
 }
 	

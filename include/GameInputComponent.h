@@ -19,6 +19,11 @@ public:
 	void mouseMove(SDL_MouseMotionEvent motion) override;
 	void mouseDown(SDL_MouseButtonEvent button) override;
 	void mouseUp(SDL_MouseButtonEvent button) override;
+	void controllerStickInput(SDL_ControllerAxisEvent motion) override;
+	void controllerButtonDown(SDL_ControllerButtonEvent button) override;
+
+	void shootFireball();
+	void shootIceball();
 
 	void assignBulPhys(BulletPhys* tempBul) { bulPhys = tempBul; };
 	void assignFireball(Object* tempObject, Shader* tempShader, Texture* tempTexture, int shapeID, BulletPhys* TempPhys) { fireballObject = tempObject, fireballShader = tempShader, fireballTexture = tempTexture, fireballShapeID = shapeID, bulPhys = TempPhys; };
@@ -50,5 +55,13 @@ private:
 	int fireballCount;
 
 	int currentSpell;
+
+	//controller 
+	bool controllerCameraX;
+	bool controllerCameraY;
+	float controllerLookX;
+	float controllerLookY;
+	float currentXValue;
+	float currentYValue;
 };
 

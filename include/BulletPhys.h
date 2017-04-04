@@ -3,6 +3,7 @@
 #include <btBulletDynamicsCommon.h>
 #include "GameObject.h"
 #include "FireballComponent.h"
+#include "IceballComponent.h"
 
 class BulletPhys
 {
@@ -16,6 +17,7 @@ public:
 	void updatePhysics();
 	btRigidBody* getRidgidBody(int ID);
 	btVector3 getPosition(btRigidBody* body);
+	void removePhysics(btRigidBody* tempBody);
 
 
 private:

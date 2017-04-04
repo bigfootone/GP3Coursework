@@ -44,6 +44,8 @@ public:
 	void mouseMove(SDL_MouseMotionEvent motion) override;
 	void mouseDown(SDL_MouseButtonEvent button) override {};
 	void mouseUp(SDL_MouseButtonEvent button)override {};
+	void controllerButtonDown(SDL_ControllerButtonEvent button) override {};
+	void controllerStickInput(SDL_ControllerAxisEvent motion) override;
 
 	//ShadowMapping
 	void ShadowFramebuffer();

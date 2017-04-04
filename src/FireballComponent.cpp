@@ -16,7 +16,9 @@ FireballComponent::~FireballComponent()
 void FireballComponent::update(mat4 MVPMat)
 {
 	if (activeLight)
+	{
 		activeLight->m_lightPosition = vec4(owner->getWorldPos(), 1);
+	}
 }
 
 bool FireballComponent::collision(GameObject* target)

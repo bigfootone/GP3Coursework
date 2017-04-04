@@ -69,6 +69,27 @@ GameObject::GameObject(string tempName, GameObject *tempParent)
 
 GameObject::~GameObject()
 {
+	list<GameObject*> deleteChildren;
+	for (auto const& i : childrenList)
+	{
+		deleteChildren.push_front(i.second);
+	}
+	for each(GameObject* child in deleteChildren)
+	{
+		delete child;
+	}
+
+	list<Component*> deleteComponents;
+	for (auto const& i : componentsList)
+	{
+		deleteComponents.push_front(i.second);
+	}
+	for each(Component* comp in deleteComponents)
+	{
+		delete comp;
+	}
+
+	parent->getChildrenMap()->erase(name);
 }
 
 void GameObject::update(mat4 VPMat)

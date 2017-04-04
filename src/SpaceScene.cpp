@@ -141,7 +141,7 @@ void SpaceScene::createScene()
 	objects["iceball"]->createBuffer("/iceball2.FBX");
 
 	objects.insert(pair<string, Object*>("target", new Object("target")));
-	objects["target"]->createBuffer("/utah-teapot.FBX");
+	objects["target"]->createBuffer("/training-doll.FBX");
 
 	//objects.insert(pair<string, Object*>("cubeMesh", new Cube("cubeMesh")));
 	//objects["cubeMesh"]->createBuffer();
@@ -222,7 +222,7 @@ void SpaceScene::createScene()
 
 	tempObj->addChild(new GameObject("targetFire", tempObj, objects["target"], textures["targetFire"], shaders["main"]));	//creating object
 	tempObj->getChild("targetFire")->addComponent(new Renderer(tempObj->getChild("targetFire")));	//adding render comp
-	tempObj->getChild("targetFire")->addComponent(new physicsComponent(tempObj->getChild("targetFire"), bulPhys->CreatePhysBox(btVector3(0, 0, 20), 500000000, groundBoxID))); //adding physics comp
+	tempObj->getChild("targetFire")->addComponent(new physicsComponent(tempObj->getChild("targetFire"), bulPhys->CreatePhysBox(btVector3(0, 0, 20), 500000000, groundBoxID), bulPhys)); //adding physics comp
 	//tempObj->getChild("targetFire")->setPosition(vec3(0, 0, 20));	//changing postiion
 	tempObj->getChild("targetFire")->setRotation(vec3(-90, 0, 0));	//change rotaion
 	tempObj->getChild("targetFire")->setScale(vec3(1, 1, 1));	//change scale
@@ -390,6 +390,11 @@ void SpaceScene::onkeyUp(SDL_Keycode key)
 }
 
 void SpaceScene::mouseMove(SDL_MouseMotionEvent motion)
+{
+
+}
+
+void SpaceScene::controllerStickInput(SDL_ControllerAxisEvent motion)
 {
 
 }
