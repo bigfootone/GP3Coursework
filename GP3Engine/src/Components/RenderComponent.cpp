@@ -57,26 +57,27 @@ void Renderer::render()
 		CHECK_GL_ERROR();
 		//get the uniform for the texture coords
 
+		//if its a fireball, add lighting
 		Lighting *lPtr = FireballComponent::getActiveLight();
 		if (lPtr)
 		{
 			Lighting l = *lPtr;
 
-			GLint uniformLoc = glGetUniformLocation(owner->getShader()->getShader(), "light.diffuse");//inside material strut of texture spec FS
+			GLint uniformLoc = glGetUniformLocation(owner->getShader()->getShader(), "light.diffuse");	//inside light strut - diffuse value
 			glUniform3f(uniformLoc, l.m_lightDiffuse.r, l.m_lightDiffuse.g, l.m_lightDiffuse.b);
 
-			uniformLoc = glGetUniformLocation(owner->getShader()->getShader(), "light.ambient");//inside material strut of texture spec FS
+			uniformLoc = glGetUniformLocation(owner->getShader()->getShader(), "light.ambient");	//inside light strut - ambient value
 			glUniform3f(uniformLoc, l.m_lightAmbient.r, l.m_lightAmbient.g, l.m_lightAmbient.b);
 
-			uniformLoc = glGetUniformLocation(owner->getShader()->getShader(), "light.specular");//inside material strut of texture spec FS
+			uniformLoc = glGetUniformLocation(owner->getShader()->getShader(), "light.specular");	//inside light strut - specular value
 			glUniform3f(uniformLoc, l.m_lightSpecular.r, l.m_lightSpecular.g, l.m_lightSpecular.b);
 
-			uniformLoc = glGetUniformLocation(owner->getShader()->getShader(), "light.position");//inside material strut of texture spec FS
+			uniformLoc = glGetUniformLocation(owner->getShader()->getShader(), "light.position");	//inside light strut - position value
 			vec4 pos = l.m_lightPosition;
 			glUniform3f(uniformLoc, pos.x, pos.y, pos.z);
 		}
 
-		GLint texture0Location = glGetUniformLocation(owner->getShader()->getShader(), "material.diffuse");//inside material strut of texture spec FS
+		GLint texture0Location = glGetUniformLocation(owner->getShader()->getShader(), "material.diffuse");	//inside material strut - diffuse value
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, owner->getTexture()->getTexture());
 		glUniform1i(texture0Location, 0);
@@ -86,10 +87,10 @@ void Renderer::render()
 		{
 			Material m = fireball->getMaterial();
 
-			GLint uniformLoc = glGetUniformLocation(owner->getShader()->getShader(), "material.specular");//inside material strut of texture spec FS
+			GLint uniformLoc = glGetUniformLocation(owner->getShader()->getShader(), "material.specular");	//inside material strut - specular value
 			glUniform3f(uniformLoc, m.m_Specular.r, m.m_Specular.g, m.m_Specular.b);
 
-			uniformLoc = glGetUniformLocation(owner->getShader()->getShader(), "material.shininess");//inside material strut of texture spec FS
+			uniformLoc = glGetUniformLocation(owner->getShader()->getShader(), "material.shininess");	//inside material strut - shininess value
 			glUniform1f(uniformLoc, m.m_Shininess);
 		}
 
@@ -104,10 +105,6 @@ void Renderer::render()
 		CHECK_GL_ERROR();
 	}
 
-	/*GLint toonShadeLocation = glGetUniformLocation(owner->getShader()->getShader(), "toonShade");
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_1D, owner->getTexture()->getTexture());
-	glUniform1i(toonShadeLocation, 1);*/
 
 	glBindVertexArray(owner->getModel()->getVAO());
 	CHECK_GL_ERROR();

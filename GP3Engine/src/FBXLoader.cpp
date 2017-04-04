@@ -87,7 +87,7 @@ FbxString GetAttributeTypeName(FbxNodeAttribute::EType type)
 	}
 }
 
-bool loadFBXFromFile(const string& filename, MeshData *meshData)
+bool loadFBXFromFile(const string filename, MeshData *meshData)
 {
 	level = 0;
 	//init sdk manager. this handles memory management
@@ -102,6 +102,7 @@ bool loadFBXFromFile(const string& filename, MeshData *meshData)
 	FbxImporter* iImporter = FbxImporter::Create(iSDKManager, "");
 
 	//call the init method which will load the contents of the FBX file
+	printf("[Info] model loading: %s\n", filename.c_str());
 	if (!iImporter->Initialize(filename.c_str(), -1, iSDKManager->GetIOSettings()))
 	{
 		return false;

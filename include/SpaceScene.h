@@ -59,6 +59,8 @@ public:
 	void CleanUpFrameBuffer();
 	void RenderPostQuad();
 
+	void spawnTargets();
+
 private:
 	//ShadowMapping 1st pass
 	GLuint depthTexture;
@@ -141,6 +143,11 @@ private:
 	GameObject* playerObject;
 	Audio* backgroundAudio;
 	bool musicState;
+
+	GameObject* spaceNode;
+	float lastTime;
+	float spawnTimer = 5000;
+	int numberOfTargets = 0;
 };
 
 #endif

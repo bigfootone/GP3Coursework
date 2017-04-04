@@ -4,7 +4,7 @@
 
 BulletPhys::BulletPhys()
 {
-	//set up code taken from bullet example page
+	//from https://github.com/bulletphysics/bullet3/blob/master/examples/HelloWorld/HelloWorld.cpp   bullet hello world tutorial
 
 	//collision configuration contains default setup for memory, collision setup.
 	collisionConfiguration = new btDefaultCollisionConfiguration();
@@ -159,6 +159,7 @@ void BulletPhys::updatePhysics()
 		int numContacts = contactManifold->getNumContacts();
 		if (objectA && objectB)
 		{
+			// check to see if either object is a fireball or iceball and if it is then perform collision work
 			FireballComponent* tempFireballComponent = (FireballComponent*)objectA->getComponents("fireball component");
 			IceballComponent* tempIceballComponent = (IceballComponent*)objectA->getComponents("Iceball Component");
 			if (tempFireballComponent)

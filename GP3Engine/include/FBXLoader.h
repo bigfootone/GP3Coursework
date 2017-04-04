@@ -6,7 +6,7 @@
 #include "Vertex.h"
 #include <fbxsdk.h>
 
-bool loadFBXFromFile(const string& filename, MeshData *meshData);
+bool loadFBXFromFile(const string filename, MeshData *meshData);
 
 void processNode(FbxNode *node, MeshData *meshData);
 void processAttribute(FbxNodeAttribute *attribute, MeshData *meshData);

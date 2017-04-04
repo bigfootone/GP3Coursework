@@ -38,15 +38,6 @@ void SpaceScene::render()
 	//clear the color and depth buffer
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	//blend alpha channel
-	//glEnable(GL_BLEND);
-	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	//backface culling
-	//glEnable(GL_CULL_FACE);
-	//glCullFace(GL_BACK);
-
-
 	glUseProgram(shaders["main"]->getShader());
 	//update();
 
@@ -95,6 +86,12 @@ void SpaceScene::update()
 	);
 
 	depthBias = biasMatrix * depthMVP;
+
+	if (SDL_GetTicks() - lastTime  > spawnTimer)
+	{
+		spawnTargets();
+		lastTime = SDL_GetTicks();
+	}
 }
 
 void SpaceScene::createScene()
@@ -116,19 +113,8 @@ void SpaceScene::createScene()
 
 	//bullet physics
 	bulPhys = new BulletPhys();
-	//bulPhys->CreateGroundPlane();
 	groundBoxID = bulPhys->CreateBoxShape(btVector3(2, 3, 2));
 	missileBoxID = bulPhys->CreateBoxShape(btVector3(5, 3, 3));
-
-	//create cubemap texture
-	skyMaterial = new CubeTexture("skybox");
-	string skyBoxFront = ASSET_PATH + TEXTURE_PATH + "/skybox/Space_front.png";
-	string skyBoxBack = ASSET_PATH + TEXTURE_PATH + "/skybox/Space_back.png";
-	string skyBoxLeft = ASSET_PATH + TEXTURE_PATH + "/skybox/Space_left.png";
-	string skyBoxRight = ASSET_PATH + TEXTURE_PATH + "/skybox/Space_right.png";
-	string skyBoxTop = ASSET_PATH + TEXTURE_PATH + "/skybox/Space_top.png";
-	string skyBoxBottom = ASSET_PATH + TEXTURE_PATH + "/skybox/Space_bottom.png";
-	skyMaterial->loadSkyBoxTextures(skyBoxFront, skyBoxBack, skyBoxLeft, skyBoxRight, skyBoxTop, skyBoxBottom);
 
 	//create objects
 	objects.insert(pair<string, Object*>("ground", new Object("ground")));
@@ -140,24 +126,27 @@ void SpaceScene::createScene()
 	objects.insert(pair<string, Object*>("iceball", new Object("iceball")));
 	objects["iceball"]->createBuffer("/iceball2.FBX");
 
-	objects.insert(pair<string, Object*>("target", new Object("target")));
-	objects["target"]->createBuffer("/training-doll.FBX");
+	objects.insert(pair<string, Object*>("fireTarget", new Object("fireTarget")));
+	objects["fireTarget"]->createBuffer("/training-doll.FBX");
 
-	//objects.insert(pair<string, Object*>("cubeMesh", new Cube("cubeMesh")));
-	//objects["cubeMesh"]->createBuffer();
+	objects.insert(pair<string, Object*>("iceTarget", new Object("iceTarget")));
+	objects["iceTarget"]->createBuffer("/snowFlake.FBX");
 
 	//create textures
 	textures.insert(pair<string, Texture*>("ground", new Texture("ground")));
 	textures["ground"]->createTexture("/wallTexture.png");
 
 	textures.insert(pair<string, Texture*>("targetFire", new Texture("targetFire")));
-	textures["targetFire"]->createTexture("/NeptuneTexture.png");
+	textures["targetFire"]->createTexture("/sunTexture.png");
 
 	textures.insert(pair<string, Texture*>("targetIce", new Texture("targetIce")));
-	textures["targetIce"]->createTexture("/VenusTexture.png");
+	textures["targetIce"]->createTexture("/snowFlakeTexture.jpg");
 
 	textures.insert(pair<string, Texture*>("fireball", new Texture("fireball")));
 	textures["fireball"]->createTexture("/SunTexture.png");
+
+	textures.insert(pair<string, Texture*>("iceball", new Texture("iceball")));
+	textures["iceball"]->createTexture("/NeptuneTexture.png");
 
 	//create shaders
 	Shader * currentShader = new Shader("main");
@@ -183,8 +172,6 @@ void SpaceScene::createScene()
 	fustrum->updateCamera();
 	worldObject->setScene(this);
 
-	//loadScene(worldObject, name, this);
-
 	//uncomment for world reset
 	GameObject *tempObj;
 
@@ -193,51 +180,38 @@ void SpaceScene::createScene()
 	tempObj = worldObject->getChild("SpaceNode"); //setting temp object for easy access
 	tempObj->setPosition(vec3(0, 0, 0));
 	tempObj->setActive(true);
-
-	/*player
-	tempObj->addChild(new GameObject("player", tempObj, input));
-	GameInputComponent *inputComp = new GameInputComponent(tempObj->getChild("player"));
-	inputComp->assignMissile(objects["fireball"], shaders["main"], textures["sun"], missileBoxID, bulPhys);
-	tempObj->getChild("player")->addComponent(inputComp);*/
-
+	spaceNode = tempObj;
 	
+	//create player object
 	playerObject = new GameObject("player", tempObj, input);
 	tempObj->addChild(playerObject);
 	GameInputComponent *inputComp = new GameInputComponent(tempObj->getChild("player"));
 	inputComp->assignFireball(objects["fireball"], shaders["main"], textures["fireball"], missileBoxID, bulPhys);
-	inputComp->assignIceball(objects["iceball"], shaders["main"], textures["targetFire"], missileBoxID, bulPhys);
+	inputComp->assignIceball(objects["iceball"], shaders["main"], textures["iceball"], missileBoxID, bulPhys);
 	playerObject->addComponent(inputComp);
 	playerObject->setPosition(vec3(0, 0, 0));
 	playerObject->setScale(vec3(1, 1, 1));
 
+	//create ground
+	GameObject *ground = new GameObject("ground", tempObj, objects["ground"], textures["ground"], shaders["main"]);
+	ground->addComponent(new Renderer(ground));	//adding render comp
+	ground->setPosition(vec3(0, -305, 225));	//changing postiion
+	ground->setRotation(vec3(-180, 0, 0));	//change rotaion
+	ground->setScale(vec3(15, 15, 15));	//change scale
+	ground->setForceRender(true);
+	tempObj->addChild(ground);	//creating object
 	
-	GameObject *go = new GameObject("ground", tempObj, objects["ground"], textures["ground"], shaders["main"]);
-	go->addComponent(new Renderer(go));	//adding render comp
-	go->setPosition(vec3(0, -105, 75));	//changing postiion
-	go->setRotation(vec3(-180, 0, 0));	//change rotaion
-	go->setScale(vec3(5, 5, 5));	//change scale
-	go->setForceRender(true);
-	tempObj->addChild(go);	//creating object
-	
-
-	tempObj->addChild(new GameObject("targetFire", tempObj, objects["target"], textures["targetFire"], shaders["main"]));	//creating object
-	tempObj->getChild("targetFire")->addComponent(new Renderer(tempObj->getChild("targetFire")));	//adding render comp
-	tempObj->getChild("targetFire")->addComponent(new physicsComponent(tempObj->getChild("targetFire"), bulPhys->CreatePhysBox(btVector3(0, 0, 20), 500000000, groundBoxID), bulPhys)); //adding physics comp
-	//tempObj->getChild("targetFire")->setPosition(vec3(0, 0, 20));	//changing postiion
-	tempObj->getChild("targetFire")->setRotation(vec3(-90, 0, 0));	//change rotaion
-	tempObj->getChild("targetFire")->setScale(vec3(1, 1, 1));	//change scale
-	tempObj->getChild("targetFire")->setForceRender(true);
-
-																//set skybox
-	//worldObject->addChild(new GameObject("skybox", worldObject, objects["cubeMesh"], skyMaterial, shaders["main"]));
-	//worldObject->getChild("skybox")->addComponent(RENDER_COMPONENT);
-	//worldObject->getChild("skybox")->setForceRender(true);
-	//worldObject->getChild("skybox")->setScale(vec3(20, 20, 20));	//change scele
+	srand(time(NULL));
+	spawnTargets();
+	spawnTargets();
+	spawnTargets();
+	lastTime = SDL_GetTicks();
 
 	//music
 	backgroundAudio = new Audio();
 	backgroundAudio->createBuffer("/bgMusic.wav");
-	//backgroundAudio->playAudio();
+	backgroundAudio->playAudio();
+	backgroundAudio->loopAudio(true);
 
 
 	cout << "world: " << worldObject->getName() << " components: ";
@@ -262,7 +236,6 @@ void SpaceScene::createScene()
 	gLightAmbientCoeLoc = glGetUniformLocation(shaderID, "light.ambientCoefficient");
 	cameraPosLoc = glGetUniformLocation(shaderID, "cameraPosition");
 	modelLocation = glGetUniformLocation(shaderID, "M");
-
 
 	CHECK_GL_ERROR();
 }
@@ -402,6 +375,41 @@ void SpaceScene::controllerStickInput(SDL_ControllerAxisEvent motion)
 string SpaceScene::getName()
 {
 	return name;
+}
+
+void SpaceScene::spawnTargets()
+{
+
+	for (int i = 1; i < 3; i++)
+	{
+		//set random location and rotation within range
+		vec3 targetSpawnFire = vec3(rand() % 400 + -200, 0, rand() % 400 + -200);	
+		vec3 targetSpawnIce = vec3(rand() % 400 + -200, 4, rand() % 400 + -200);
+		vec3 targetIceRotation = vec3(0, rand() % 360, 0);
+
+		//firetarget spawn
+		GameObject *fireTarget = new GameObject("targetFire " + to_string(numberOfTargets), spaceNode, objects["fireTarget"], textures["targetFire"], shaders["main"]);
+		fireTarget->addComponent(new Renderer(fireTarget));	//adding render comp
+		fireTarget->addComponent(new physicsComponent(fireTarget, bulPhys->CreatePhysBox(btVector3(targetSpawnFire.x, targetSpawnFire.y, targetSpawnFire.z), 500000000, groundBoxID), bulPhys)); //adding physics comp
+		fireTarget->setPosition(targetSpawnFire);	//change position
+		fireTarget->setRotation(vec3(-90, 0, 0));	//change rotaion
+		fireTarget->setScale(vec3(1, 1, 1));	//change scale
+		fireTarget->setForceRender(true);
+		spaceNode->addChild(fireTarget);	//creating object
+
+		//ice target spawn
+		GameObject *iceTarget = new GameObject("targetIce " + to_string(numberOfTargets), spaceNode, objects["iceTarget"], textures["targetIce"], shaders["main"]);
+		iceTarget->addComponent(new Renderer(iceTarget));	//adding render comp
+		iceTarget->addComponent(new physicsComponent(iceTarget, bulPhys->CreatePhysBox(btVector3(targetSpawnIce.x, targetSpawnIce.y, targetSpawnIce.z), 500000000, groundBoxID), bulPhys)); //adding physics comp	
+		iceTarget->setPosition(targetSpawnIce);	//change position
+		iceTarget->setRotation(targetIceRotation);	//change rotaion
+		iceTarget->setScale(vec3(0.5, 0.5, 0.5));	//change scale
+		iceTarget->setForceRender(true);
+		spaceNode->addChild(iceTarget);	//creating object
+
+		//to control current target number
+		numberOfTargets++;
+	}
 }
 
 

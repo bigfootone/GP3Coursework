@@ -41,3 +41,16 @@ void Audio::stopAudio()
 	//stop audio
 	alSourceStop(AudioSource);
 }
+
+void Audio::loopAudio(bool looping)
+{
+	//control looping of audio tracks
+	if (looping)
+	{
+		alSourcei(AudioSource, AL_LOOPING, AL_TRUE);
+	}
+	else
+	{
+		alSourcei(AudioSource, AL_LOOPING, AL_FALSE);
+	}
+}

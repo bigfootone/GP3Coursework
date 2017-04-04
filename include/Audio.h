@@ -13,6 +13,7 @@ public:
 	void createBuffer(string Audiopath);
 	void playAudio();
 	void stopAudio();
+	void loopAudio(bool looping);
 
 private:
 

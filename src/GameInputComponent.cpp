@@ -25,6 +25,7 @@ GameInputComponent::~GameInputComponent()
 
 void GameInputComponent::update(mat4 MVPMat)
 {
+	//booleans for cleaner movement
 	if (isMoveForward == true)
 	{
 		owner->getInput()->moveForward();
@@ -46,6 +47,7 @@ void GameInputComponent::update(mat4 MVPMat)
 	if (controllerCameraX == true || controllerCameraY == true)
 	{
 
+		// modified from mouse look
 		//SDL_WarpMouseInWindow(getWin(), SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 		//owner->getInput()->mouseMovment(vec2(motion.x, motion.y));
 
@@ -63,6 +65,7 @@ void GameInputComponent::update(mat4 MVPMat)
 
 void GameInputComponent::onKeyDown(SDL_Keycode key)
 {
+	//enabling directional movement when key is down
 	switch (key)
 	{
 	case SDLK_w:
@@ -92,6 +95,7 @@ void GameInputComponent::onKeyDown(SDL_Keycode key)
 
 void GameInputComponent::onkeyUp(SDL_Keycode key)
 {
+	//disabling movement when key is up
 	switch (key)
 	{
 	case SDLK_w:
@@ -153,7 +157,7 @@ void GameInputComponent::controllerStickInput(SDL_ControllerAxisEvent motion)
 	case SDL_CONTROLLER_AXIS_LEFTX:
 		if (motion.value > 15000)
 		{
-			isMoveRight = true;
+			isMoveRight = true;	//check left stick input 
 		}
 		else if (motion.value < -15000)
 		{
@@ -184,12 +188,12 @@ void GameInputComponent::controllerStickInput(SDL_ControllerAxisEvent motion)
 		if (motion.value > 15000)
 		{
 			controllerCameraX = true;
-			currentXValue = motion.value / 3767;
+			currentXValue = motion.value / 3767;	//divide the input value by maximum value
 		}
 		else if (motion.value < -15000)
 		{
 			controllerCameraX = true;
-			currentXValue = motion.value / 3767;
+			currentXValue = motion.value / 3767;	//divide the input value by maximum value
 		}
 		else 
 		{
@@ -201,12 +205,12 @@ void GameInputComponent::controllerStickInput(SDL_ControllerAxisEvent motion)
 		if (motion.value > 15000)
 		{
 			controllerCameraY = true;
-			currentYValue = motion.value / 3767;
+			currentYValue = motion.value / 3767;	//divide the input value by maximum value
 		}
 		else if (motion.value < -15000)
 		{
 			controllerCameraY = true;
-			currentYValue = motion.value / 3767;
+			currentYValue = motion.value / 3767;	//divide the input value by maximum value
 		}
 		else
 		{
@@ -223,58 +227,59 @@ void GameInputComponent::shootFireball()
 	GameObject* thisFireball;
 	string TempName = "fireball" + to_string(fireballCount);
 
-	thisFireball = new GameObject(TempName, owner, fireballObject, fireballTexture, fireballShader);	//creating object
+	thisFireball = new GameObject(TempName, owner, fireballObject, fireballTexture, fireballShader);	//creating fireball
 	owner->addChild(thisFireball);
 	fireballCount++;
 
 	btVector3 FirePosition = btVector3(owner->getWorldPos().x, owner->getWorldPos().y, owner->getWorldPos().z);
-	cout << "position " << owner->getWorldPos().x << " " << owner->getWorldPos().y << " " << owner->getWorldPos().z << endl;
-	btRigidBody* missile1 = bulPhys->CreatePhysBox(FirePosition, 1, fireballShapeID);
+	cout << "position " << owner->getWorldPos().x << " " << owner->getWorldPos().y << " " << owner->getWorldPos().z << endl;	//debugging spawn location
+	btRigidBody* fireballRB = bulPhys->CreatePhysBox(FirePosition, 1, fireballShapeID);	//applying physics volume
 
 	btVector3 fireForce = btVector3(playerCon->getlookAtPoint().x * 10000, playerCon->getlookAtPoint().y * 10000, playerCon->getlookAtPoint().z * 10000);
-	missile1->applyForce(fireForce, FirePosition);
+	fireballRB->applyForce(fireForce, FirePosition);
 
 	thisFireball->addComponent(new Renderer(owner->getChild(TempName)));
-	FireballComponent* fireball = new FireballComponent(owner->getChild(TempName));
-	Material spellMaterial(lightColour4(0.0f, 0.0f, 0.0f, 1.0f), lightColour4(1.0f, 1.0f, 1.0f, 1.0f), lightColour4(1.0f, 1.0f, 1.0f, 1.0f), lightColour4(0, 0, 0, 1.0f), 5.0f);
-	fireball->setMaterial(spellMaterial);
-	Lighting light(lightColour4(0, 0, 0, 1), lightColour4(1, 1, 1, 1), lightColour4(1, 1, 1, 1), glm::vec4(0, 0, 20, 1), glm::vec3(0.0, 0.0, 1.0), 0.0f, 10.0f, 1.0f, 0.0f, 0.0f);
-	fireball->setLighting(light);
-	thisFireball->addComponent(fireball);
-	thisFireball->addComponent(new physicsComponent(owner->getChild(TempName), missile1, bulPhys)); //adding physics comp
+	FireballComponent* fireball = new FireballComponent(owner->getChild(TempName));	//new fireball component
+	Material spellMaterial(lightColour4(0.0f, 0.0f, 0.0f, 1.0f), lightColour4(1.0f, 1.0f, 1.0f, 1.0f), lightColour4(1.0f, 1.0f, 1.0f, 1.0f), lightColour4(0, 0, 0, 1.0f), 5.0f);	//create material for lighting
+	fireball->setMaterial(spellMaterial);	//set material
+	Lighting light(lightColour4(0, 0, 0, 1), lightColour4(1, 1, 1, 1), lightColour4(1, 1, 1, 1), glm::vec4(0, 0, 20, 1), glm::vec3(0.0, 0.0, 1.0), 0.0f, 10.0f, 1.0f, 0.0f, 0.0f);	//create light
+	fireball->setLighting(light);	//set lighting
+	thisFireball->addComponent(fireball);	//add fireball component to fireball
+	thisFireball->addComponent(new physicsComponent(owner->getChild(TempName), fireballRB, bulPhys)); //adding physics comp
 	thisFireball->setPosition(vec3(0, 0, 0));	//changing postiion
 	thisFireball->setRotation(vec3(0, 0, 0));	//change rotaion
 	thisFireball->setScale(vec3(0.2, 0.2, 0.2));	//change scale
 	thisFireball->setForceRender(true);
 
 	//audio
-	Audio* fireAudio;
-	fireAudio = new Audio();
-	fireAudio->createBuffer("/fireball.wav");
+	Audio* fireAudio;	
+	fireAudio = new Audio();	//create audio object
+	fireAudio->createBuffer("/fireball.wav");	//audio file
 	fireAudio->playAudio();
 }
 
 void GameInputComponent::shootIceball()
 {
+	//iceball does not contain lighting/materials do to bugs
 	playerCon->FirePrimWeapon();
 
 	GameObject* thisIceball;
 	string TempName = "iceball" + to_string(fireballCount);
 
-	thisIceball = new GameObject(TempName, owner, iceballObject, iceballTexture, iceballShader);	//creating object
+	thisIceball = new GameObject(TempName, owner, iceballObject, iceballTexture, iceballShader);	//creating iceball
 	owner->addChild(thisIceball);
 	fireballCount++;
 
 	btVector3 FirePosition = btVector3(owner->getWorldPos().x, owner->getWorldPos().y, owner->getWorldPos().z);
-	cout << "position " << owner->getWorldPos().x << " " << owner->getWorldPos().y << " " << owner->getWorldPos().z << endl;
-	btRigidBody* missile1 = bulPhys->CreatePhysBox(FirePosition, 1, fireballShapeID);
+	cout << "position " << owner->getWorldPos().x << " " << owner->getWorldPos().y << " " << owner->getWorldPos().z << endl;	//debugging spawn location
+	btRigidBody* iceballRB = bulPhys->CreatePhysBox(FirePosition, 1, fireballShapeID);	//applying physics volume
 
 	btVector3 fireForce = btVector3(playerCon->getlookAtPoint().x * 10000, playerCon->getlookAtPoint().y * 10000, playerCon->getlookAtPoint().z * 10000);
-	missile1->applyForce(fireForce, FirePosition);
+	iceballRB->applyForce(fireForce, FirePosition);
 
 	thisIceball->addComponent(new Renderer(owner->getChild(TempName)));
 	thisIceball->addComponent(new IceballComponent(owner->getChild(TempName)));
-	thisIceball->addComponent(new physicsComponent(owner->getChild(TempName), missile1, bulPhys)); //adding physics comp
+	thisIceball->addComponent(new physicsComponent(owner->getChild(TempName), iceballRB, bulPhys)); //adding physics comp
 	thisIceball->setPosition(vec3(0, 0, 0));	//changing postiion
 	thisIceball->setRotation(vec3(0, 0, 0));	//change rotaion
 	thisIceball->setScale(vec3(0.2, 0.2, 0.2));	//change scale

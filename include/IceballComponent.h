@@ -13,5 +13,10 @@ public:
 	void update(mat4 MVPMat) override;
 
 	bool collision(GameObject* target);
+
+private:
+
+	float lifespan;
+	float lastTime;
 };
 #pragma once
